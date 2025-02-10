@@ -5,41 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="20dp"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/nameLabel"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
-        android:text="Nombre"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvLibros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/AutorLabel"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="10dp"
-        android:text="Autor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameLabel" />
-
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginLeft="20dp"
-        android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/nameLabel"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/Autor"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/AutorLabel"
-        app:layout_constraintTop_toBottomOf="@+id/nameLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

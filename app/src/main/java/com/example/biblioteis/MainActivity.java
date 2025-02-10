@@ -1,7 +1,7 @@
 package com.example.biblioteis;
 
 import android.os.Bundle;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,11 +9,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.biblioteis.API.models.Book;
 import com.example.biblioteis.API.repository.BookRepository;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+    RecyclerView rvLibros;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,26 +31,30 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-
+        rvLibros = findViewById(R.id.rvLibros);
+        rvLibros.setLayoutManager(new LinearLayoutManager(this));
 
         MainActivityVM vm = new ViewModelProvider(this).get(MainActivityVM.class);
 
-        vm.book.observe(this, (Book book) -> {
-            ((TextView)findViewById(R.id.name)).setText(book.getTitle());
-            ((TextView)findViewById(R.id.Autor)).setText(book.getAuthor());
+
+        vm.books.observe(this,books -> {
+            rvLibros.setAdapter(new AdapterBooks(books));
+            Toast.makeText(this, "Cargando libros....", Toast.LENGTH_SHORT).show();
         });
 
         BookRepository br = new BookRepository();
 
-        br.getBookById(1, new BookRepository.ApiCallback<Book>() {
+
+        br.getBooks(new BookRepository.ApiCallback<List<Book>>(){
+
             @Override
-            public void onSuccess(Book result) {
-                vm.book.setValue(result);
+            public void onSuccess(List<Book> result) {
+                vm.books.setValue(result);
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(MainActivity.this, "Se ha producido un error en el servidor", Toast.LENGTH_SHORT).show();
             }
         });
 
