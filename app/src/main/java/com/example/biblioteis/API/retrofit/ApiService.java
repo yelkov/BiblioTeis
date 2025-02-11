@@ -44,6 +44,10 @@ public interface ApiService {
     @DELETE("users/{id}")
     Call<Void> deleteUser(@Path("id") int id);
 
+    @FormUrlEncoded
+    @POST("users/login")
+    Call<User> login(@Field("email") String email, @Field("password") String password);
+
     // Book Lending Endpoints
     @GET("booklending")
     Call<List<BookLending>> getLendings();

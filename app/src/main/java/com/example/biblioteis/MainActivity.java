@@ -1,6 +1,9 @@
 package com.example.biblioteis;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +22,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView rvLibros;
+    Button btnLoguear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +35,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        btnLoguear = findViewById(R.id.btnLoguear);
         rvLibros = findViewById(R.id.rvLibros);
         rvLibros.setLayoutManager(new LinearLayoutManager(this));
+
+        btnLoguear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         MainActivityVM vm = new ViewModelProvider(this).get(MainActivityVM.class);
 

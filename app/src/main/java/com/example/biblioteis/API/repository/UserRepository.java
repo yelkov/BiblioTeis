@@ -2,6 +2,7 @@ package com.example.biblioteis.API.repository;
 
 import android.util.Log;
 
+import com.example.biblioteis.API.models.BookLending;
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.retrofit.ApiClient;
 import com.example.biblioteis.API.retrofit.ApiService;
@@ -89,6 +90,21 @@ public class UserRepository {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("UserRepository", "Error deleting user", t);
+                callback.onFailure(t);
+            }
+        });
+    }
+
+    public void login(String email, String password, final BookRepository.ApiCallback<User> callback){
+        apiService.login(email,password).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                    callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e("UserRepository","Error login user",t);
                 callback.onFailure(t);
             }
         });
