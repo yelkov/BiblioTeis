@@ -2,7 +2,9 @@ package com.example.biblioteis.API.retrofit;
 
 import com.example.biblioteis.API.models.Book;
 import com.example.biblioteis.API.models.BookLending;
+import com.example.biblioteis.API.models.BookLendingForm;
 import com.example.biblioteis.API.models.User;
+import com.example.biblioteis.API.models.UserForm;
 
 import java.util.List;
 
@@ -44,9 +46,8 @@ public interface ApiService {
     @DELETE("users/{id}")
     Call<Void> deleteUser(@Path("id") int id);
 
-    @FormUrlEncoded
     @POST("users/login")
-    Call<User> login(@Field("email") String email, @Field("password") String password);
+    Call<User> login(@Body UserForm loginDTO);
 
     // Book Lending Endpoints
     @GET("booklending")
@@ -56,7 +57,7 @@ public interface ApiService {
     Call<BookLending> getLending(@Path("id") int id);
 
     @POST("booklending")
-    Call<BookLending> lendBook(@Body BookLending lending);
+    Call<BookLending> lendBook(@Body BookLendingForm lending);
 
     @PUT("booklending/{id}/return")
     Call<Void> returnBook(@Path("id") int id);

@@ -2,10 +2,10 @@ package com.example.biblioteis.API.repository;
 
 import android.util.Log;
 
-import com.example.biblioteis.API.models.BookLending;
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.retrofit.ApiClient;
 import com.example.biblioteis.API.retrofit.ApiService;
+import com.example.biblioteis.API.models.UserForm;
 
 import java.util.List;
 
@@ -96,7 +96,8 @@ public class UserRepository {
     }
 
     public void login(String email, String password, final BookRepository.ApiCallback<User> callback){
-        apiService.login(email,password).enqueue(new Callback<User>() {
+        UserForm logInTry = new UserForm(email,password);
+        apiService.login(logInTry).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                     callback.onSuccess(response.body());

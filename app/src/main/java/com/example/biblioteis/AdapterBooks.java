@@ -1,5 +1,6 @@
 package com.example.biblioteis;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class AdapterBooks extends RecyclerView.Adapter {
 
+    public static final String BOOK_ID = "bookId";
     List<Book> books;
 
     public AdapterBooks(List<Book> books){
@@ -35,6 +37,14 @@ public class AdapterBooks extends RecyclerView.Adapter {
         viewHolder.txtAutor.setText(book.getAuthor());
         viewHolder.imgLibro.setImageURI(Uri.parse(book.getBookPicture()));
         viewHolder.txtDisponibles.setText(String.valueOf(book.isAvailable()));
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), DetallesActivity.class);
+                intent.putExtra(BOOK_ID,book.getId());
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override

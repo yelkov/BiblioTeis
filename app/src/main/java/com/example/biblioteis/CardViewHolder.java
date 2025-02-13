@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CardViewHolder extends RecyclerView.ViewHolder {
     TextView txtNombre, txtAutor, txtDisponibles;
     ImageView imgLibro;
-    Button btnDetalles;
 
 
     public CardViewHolder(@NonNull View itemView) {
@@ -19,7 +18,6 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
         txtNombre = itemView.findViewById(R.id.txtNombre);
         txtAutor = itemView.findViewById(R.id.txtAutor);
         imgLibro = itemView.findViewById(R.id.imgLibro);
-        btnDetalles = itemView.findViewById(R.id.btnDetalles);
         txtDisponibles = itemView.findViewById(R.id.txtDisponibles);
     }
 }

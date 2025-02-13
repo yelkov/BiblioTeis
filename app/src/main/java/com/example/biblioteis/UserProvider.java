@@ -8,11 +8,15 @@ public class UserProvider {
     private UserProvider(){
     }
 
-    public static User getInstance(User usuario){
+    public static User getInstance(){
         if(instance == null){
-            instance = usuario;
+            instance = new User();
         }
         return instance;
+    }
+
+    public static void logout() {
+        instance = null;
     }
 
 }

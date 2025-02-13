@@ -38,25 +38,53 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
 
+        User usuario = UserProvider.getInstance();
+        if(usuario.getName() != null){
+            etEmail.setText(usuario.getName());
+            etPassword.setText(usuario.getPasswordHash());
+            btnLogin.setText("LogOut");
+        }
+
         UserRepository ur = new UserRepository();
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ur.login(etEmail.getText().toString(), etPassword.getText().toString(), new BookRepository.ApiCallback<User>() {
-                    @Override
-                    public void onSuccess(User result) {
-                        User usuario = result;
-                        Toast.makeText(LoginActivity.this, "Login existoso, bienvenido", Toast.LENGTH_SHORT).show();
-                    }
+                if(usuario.getName() == null){
+                    ur.login(etEmail.getText().toString(), etPassword.getText().toString(), new BookRepository.ApiCallback<User>() {
+                        @Override
+                        public void onSuccess(User result) {
+                            if(result == null){
+                                Toast.makeText(LoginActivity.this, "Usuario o contraseña no son correctos", Toast.LENGTH_LONG).show();
+                                etEmail.setText("");
+                                etPassword.setText("");
+                            }else{
+                                Toast.makeText(LoginActivity.this, "Login existoso, bienvenido", Toast.LENGTH_LONG).show();
+                                User usuario = UserProvider.getInstance();
+                                usuario.setEmail(result.getEmail());
+                                usuario.setName(result.getName());
+                                usuario.setId(result.getId());
+                                usuario.setBookLendings(result.getBookLendings());
+                                usuario.setDateJoined(result.getDateJoined());
+                                usuario.setPasswordHash(result.getPasswordHash());
+                                usuario.setProfilePicture(result.getProfilePicture());
+                                finish();
+                            }
+                        }
 
-                    @Override
-                    public void onFailure(Throwable t) {
-                        etEmail.setText("");
-                        etPassword.setText("");
-                        Toast.makeText(LoginActivity.this, "Usuario o contraseña no son correctos", Toast.LENGTH_LONG).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(Throwable t) {
+                            etEmail.setText("");
+                            etPassword.setText("");
+                            Toast.makeText(LoginActivity.this, "Se ha producido un error en la solicitud", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(LoginActivity.this, "Cerrando sesión", Toast.LENGTH_LONG).show();
+                    UserProvider.logout();
+                    finish();
+                }
+
             }
         });
 
