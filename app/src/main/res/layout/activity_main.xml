@@ -20,15 +20,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="right">
-            <TextView
+            android:layout_marginBottom="10dp">
+            <Button
+                android:id="@+id/btnEscanear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Usuario: "/>
-            <TextView
-                android:id="@+id/txtNombreUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:text="Escanear" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="10dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+                <TextView
+                    android:id="@+id/txtUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Usuario: "/>
+                <TextView
+                    android:id="@+id/txtNombreUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
 
             <Button
                 android:id="@+id/btnLoguear"
@@ -36,8 +52,6 @@
                 android:layout_height="wrap_content"
                 android:text="Login" />
         </LinearLayout>
-
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,23 +61,39 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Últimos libros publicados: "/>
-
-            <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUltimosPublicados"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:text="Recomendaciones: "/>
+                android:layout_margin="20dp"
+                android:text="Recomendaciones: "
+                android:layout_gravity="center"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRecomendaciones"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="#efefef"/>
+
+            <Button
+                android:id="@+id/btnCatalogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:text="Mostrar catálogo"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="Últimos libros publicados: "
+                android:layout_gravity="center"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvUltimosPublicados"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#efefef"/>
+
+
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

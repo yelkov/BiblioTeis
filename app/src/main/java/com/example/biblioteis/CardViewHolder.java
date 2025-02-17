@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CardViewHolder extends RecyclerView.ViewHolder {
-    TextView txtNombre, txtAutor, txtDisponibles;
-    ImageView imgLibro;
+    TextView txtNombre, txtAutor;
+    ImageView imgLibro, imgDisponible;
 
 
     public CardViewHolder(@NonNull View itemView) {
@@ -18,6 +18,6 @@ public class CardViewHolder extends RecyclerView.ViewHolder {
         txtNombre = itemView.findViewById(R.id.txtNombre);
         txtAutor = itemView.findViewById(R.id.txtAutor);
         imgLibro = itemView.findViewById(R.id.imgLibro);
-        txtDisponibles = itemView.findViewById(R.id.txtDisponibles);
+        imgDisponible = itemView.findViewById(R.id.imgDisponible);
     }
 }

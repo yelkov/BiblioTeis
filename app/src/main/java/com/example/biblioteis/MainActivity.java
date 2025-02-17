@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView rvUltimosPublicados, rvRecomendaciones;
-    Button btnLoguear;
-    TextView txtNombreUsuario;
+    Button btnLoguear, btnCatalogo;
+    TextView txtUsuario, txtNombreUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         txtNombreUsuario = findViewById(R.id.txtNombreUsuario);
         txtNombreUsuario.setText(" ");
-
+        txtUsuario = findViewById(R.id.txtUsuario);
+        txtUsuario.setText(" ");
 
         btnLoguear = findViewById(R.id.btnLoguear);
         rvUltimosPublicados = findViewById(R.id.rvUltimosPublicados);
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        btnCatalogo = findViewById(R.id.btnCatalogo);
 
         MainActivityVM vm = new ViewModelProvider(this).get(MainActivityVM.class);
 
@@ -96,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnCatalogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), CatalogoActivity.class);
+                v.getContext().startActivity(intent);
+            }
+        });
+
     }//fin onCreate
 
     @Override
@@ -103,11 +114,15 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
+            txtUsuario.setText("User: ");
             txtNombreUsuario.setText(usuario.getName());
             btnLoguear.setText("LogOut");
+            btnCatalogo.setVisibility(View.VISIBLE);
         }else{
+            txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
             btnLoguear.setText("LogIn");
+            btnCatalogo.setVisibility(View.GONE);
         }
     }
 }
