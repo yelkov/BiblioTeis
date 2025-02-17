@@ -17,8 +17,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.biblioteis.API.models.Book;
+import com.example.biblioteis.API.models.BookLending;
+import com.example.biblioteis.API.models.User;
+import com.example.biblioteis.API.repository.BookLendingRepository;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.ImageRepository;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 import okhttp3.ResponseBody;
 
@@ -27,6 +34,8 @@ public class DetallesActivity extends AppCompatActivity {
     TextView txtTitulo, txtAutor, txtIsbn, txtDisponible, txtFecha;
     ImageView imgLibroDetalle;
     Button btnReservar, btnVolver;
+    Book currentBook;
+    BookLending lastLending;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +60,7 @@ public class DetallesActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Integer bookId = intent.getIntExtra(AdapterBooks.BOOK_ID,0);
         BookRepository br = new BookRepository();
+        BookLendingRepository blr = new BookLendingRepository();
 
         br.getBookById(bookId, new BookRepository.ApiCallback<Book>() {
             @Override
@@ -71,10 +81,46 @@ public class DetallesActivity extends AppCompatActivity {
             }
         });
 
+        btnReservar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(btnReservar.getText().equals("Reservar")){
+                    blr.lendBook(bookId, UserProvider.getInstance().getId(), new BookRepository.ApiCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            Toast.makeText(DetallesActivity.this, "Se ha reservado el libro", Toast.LENGTH_SHORT).show();
+                            btnReservar.setText("Devolver");
+                            txtDisponible.setText("No");
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+
+                        }
+                    });
+                }else{
+                    blr.returnBook(lastLending.getId(), new BookRepository.ApiCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            Toast.makeText(DetallesActivity.this, "Libro devuelto", Toast.LENGTH_SHORT).show();
+                            btnReservar.setText("Reservar");
+                            txtDisponible.setText("Sí");
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+
+                        }
+                    });
+                }
+
+            }
+        });
 
     }
 
     public void setBook(Book book){
+        currentBook = book;
         txtTitulo.setText(book.getTitle());
         txtAutor.setText(book.getAuthor());
         txtFecha.setText(book.getPublishedDate());
@@ -99,5 +145,19 @@ public class DetallesActivity extends AppCompatActivity {
 
             }
         });
+
+        if(!book.isAvailable()){
+            List<BookLending> lendings = book.getBookLendings();
+            Optional<BookLending> optLastLending = lendings.stream().sorted(Comparator.comparing(BookLending::getId).reversed()).findFirst();
+            if(optLastLending.isPresent()){
+                lastLending = optLastLending.get();
+                User currentUser = UserProvider.getInstance();
+                if(lastLending.getUserId() == currentUser.getId()){
+                    btnReservar.setText("Devolver");
+                }else{
+                    btnReservar.setEnabled(false);
+                }
+            }
+        }
     }
 }

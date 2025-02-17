@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rvUltimosPublicados, rvRecomendaciones;
     Button btnLoguear, btnCatalogo;
     TextView txtUsuario, txtNombreUsuario;
+    BookRepository br;
+    MainActivityVM vm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnCatalogo = findViewById(R.id.btnCatalogo);
 
-        MainActivityVM vm = new ViewModelProvider(this).get(MainActivityVM.class);
+        vm = new ViewModelProvider(this).get(MainActivityVM.class);
 
 
         vm.ultimosPublicados.observe(this, books -> {
@@ -73,9 +75,22 @@ public class MainActivity extends AppCompatActivity {
             rvRecomendaciones.setAdapter(new AdapterBooks(books));
         });
 
-        BookRepository br = new BookRepository();
+        br = new BookRepository();
 
 
+        cargarLibros();
+
+        btnCatalogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), CatalogoActivity.class);
+                v.getContext().startActivity(intent);
+            }
+        });
+
+    }//fin onCreate
+
+    private void cargarLibros() {
         br.getBooks(new BookRepository.ApiCallback<List<Book>>(){
 
             @Override
@@ -98,16 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Se ha producido un error en el servidor", Toast.LENGTH_SHORT).show();
             }
         });
-
-        btnCatalogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), CatalogoActivity.class);
-                v.getContext().startActivity(intent);
-            }
-        });
-
-    }//fin onCreate
+    }
 
     @Override
     protected void onResume() {
@@ -124,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             btnLoguear.setText("LogIn");
             btnCatalogo.setVisibility(View.GONE);
         }
+        cargarLibros();
     }
 }
 

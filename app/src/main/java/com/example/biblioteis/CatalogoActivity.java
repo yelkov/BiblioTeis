@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.biblioteis.API.models.Book;
+import com.example.biblioteis.API.models.BookLending;
+import com.example.biblioteis.API.repository.BookLendingRepository;
 import com.example.biblioteis.API.repository.BookRepository;
 
 import java.util.Collections;
@@ -33,6 +35,8 @@ public class CatalogoActivity extends AppCompatActivity {
     RecyclerView rvCatalogo;
     Button btnVolver;
     EditText etBuscar;
+    CatalogoVM vm;
+    BookRepository br;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,25 +54,13 @@ public class CatalogoActivity extends AppCompatActivity {
         rvCatalogo = findViewById(R.id.rvCatalogo);
         rvCatalogo.setLayoutManager(new LinearLayoutManager(this));
 
-        CatalogoVM vm = new ViewModelProvider(this).get(CatalogoVM.class);
+        vm = new ViewModelProvider(this).get(CatalogoVM.class);
         vm.books.observe(this, books -> {
             rvCatalogo.setAdapter(new AdapterBooks(books));
         });
 
-        BookRepository br = new BookRepository();
-
-        br.getBooks(new BookRepository.ApiCallback<List<Book>>(){
-
-            @Override
-            public void onSuccess(List<Book> result) {
-                vm.books.setValue(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Toast.makeText(CatalogoActivity.this, "Se ha producido un error en el servidor", Toast.LENGTH_SHORT).show();
-            }
-        });
+        br = new BookRepository();
+        cargarLibros();
 
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,12 +77,7 @@ public class CatalogoActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String busqueda = etBuscar.getText().toString().toLowerCase();
-                List<Book> filtrados = vm.books.getValue()
-                        .stream()
-                        .filter(book -> book.getTitle().toLowerCase().contains(busqueda) || book.getAuthor().toLowerCase().contains(busqueda))
-                        .collect(Collectors.toList());
-                rvCatalogo.setAdapter(new AdapterBooks(filtrados));
+                filtrarLibros();
             }
 
             @Override
@@ -98,8 +85,36 @@ public class CatalogoActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarLibros();
 
+    }
 
+    private void filtrarLibros() {
+        String busqueda = etBuscar.getText().toString().toLowerCase();
+        List<Book> filtrados = vm.books.getValue()
+                .stream()
+                .filter(book -> book.getTitle().toLowerCase().contains(busqueda) || book.getAuthor().toLowerCase().contains(busqueda))
+                .collect(Collectors.toList());
+        rvCatalogo.setAdapter(new AdapterBooks(filtrados));
+    }
+
+    private void cargarLibros() {
+        br.getBooks(new BookRepository.ApiCallback<List<Book>>(){
+
+            @Override
+            public void onSuccess(List<Book> result) {
+                vm.books.setValue(result);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(CatalogoActivity.this, "Se ha producido un error en el servidor", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
