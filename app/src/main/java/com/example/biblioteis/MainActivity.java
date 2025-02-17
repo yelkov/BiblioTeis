@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView rvUltimosPublicados, rvRecomendaciones;
-    Button btnLoguear, btnCatalogo;
+    Button btnLoguear, btnCatalogo, btnPerfil;
     TextView txtUsuario, txtNombreUsuario;
     BookRepository br;
     MainActivityVM vm;
@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnCatalogo = findViewById(R.id.btnCatalogo);
+        btnPerfil = findViewById(R.id.btnPerfil);
 
         vm = new ViewModelProvider(this).get(MainActivityVM.class);
 
@@ -124,11 +125,13 @@ public class MainActivity extends AppCompatActivity {
             txtNombreUsuario.setText(usuario.getName());
             btnLoguear.setText("LogOut");
             btnCatalogo.setVisibility(View.VISIBLE);
+            btnPerfil.setVisibility(View.VISIBLE);
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
             btnLoguear.setText("LogIn");
             btnCatalogo.setVisibility(View.GONE);
+            btnPerfil.setVisibility(View.GONE);
         }
         cargarLibros();
     }

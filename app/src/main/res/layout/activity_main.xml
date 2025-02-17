@@ -21,11 +21,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginBottom="10dp">
-            <Button
+            <ImageButton
                 android:id="@+id/btnEscanear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Escanear" />
+                android:src="@drawable/camara"
+                android:scaleType="fitCenter"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                 />
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -70,15 +72,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#efefef"/>
-
-            <Button
-                android:id="@+id/btnCatalogo"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="20dp"
-                android:text="Mostrar catálogo"
-                android:visibility="gone"/>
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <Button
+                    android:id="@+id/btnCatalogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="Mostrar catálogo"
+                    android:visibility="gone"/>
+                <Button
+                    android:id="@+id/btnPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="Ir al perfil"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
