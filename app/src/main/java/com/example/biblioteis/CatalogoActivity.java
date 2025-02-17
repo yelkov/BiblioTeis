@@ -1,8 +1,13 @@
 package com.example.biblioteis;
 
+import static androidx.core.widget.TextViewKt.addTextChangedListener;
+
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,6 +32,7 @@ public class CatalogoActivity extends AppCompatActivity {
 
     RecyclerView rvCatalogo;
     Button btnVolver;
+    EditText etBuscar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,7 @@ public class CatalogoActivity extends AppCompatActivity {
         });
 
         btnVolver = findViewById(R.id.btnVolverCatalogo);
+        etBuscar = findViewById(R.id.etBuscar);
         rvCatalogo = findViewById(R.id.rvCatalogo);
         rvCatalogo.setLayoutManager(new LinearLayoutManager(this));
 
@@ -69,5 +76,30 @@ public class CatalogoActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        etBuscar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String busqueda = etBuscar.getText().toString().toLowerCase();
+                List<Book> filtrados = vm.books.getValue()
+                        .stream()
+                        .filter(book -> book.getTitle().toLowerCase().contains(busqueda) || book.getAuthor().toLowerCase().contains(busqueda))
+                        .collect(Collectors.toList());
+                rvCatalogo.setAdapter(new AdapterBooks(filtrados));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+
     }
 }
