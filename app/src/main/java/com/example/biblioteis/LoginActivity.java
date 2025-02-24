@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
-            etEmail.setText(usuario.getName());
+            etEmail.setText(usuario.getEmail());
             etPassword.setText(usuario.getPasswordHash());
             btnLogin.setText("LogOut");
         }

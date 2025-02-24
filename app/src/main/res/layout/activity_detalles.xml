@@ -76,30 +76,11 @@
                 android:layout_height="wrap_content"
                 android:text="" />
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Está disponible: " />
-
-            <TextView
-                android:id="@+id/txtDisponible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,6 +91,27 @@
                 android:id="@+id/txtFecha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearDevolucion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha de devolución: " />
+
+            <TextView
+                android:id="@+id/txtDisponible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="" />
         </LinearLayout>
 
