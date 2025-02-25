@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class MainActivity extends AppCompatActivity {
     RecyclerView rvUltimosPublicados, rvRecomendaciones;
     Button btnLoguear, btnCatalogo, btnPerfil;
+    ImageButton btnEscanear;
     TextView txtUsuario, txtNombreUsuario;
     BookRepository br;
     MainActivityVM vm;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         txtUsuario.setText(" ");
 
         btnLoguear = findViewById(R.id.btnLoguear);
+        btnEscanear = findViewById(R.id.btnEscanear);
         rvUltimosPublicados = findViewById(R.id.rvUltimosPublicados);
         rvUltimosPublicados.setLayoutManager(new LinearLayoutManager(this));
         rvRecomendaciones = findViewById(R.id.rvRecomendaciones);
@@ -134,6 +137,14 @@ public class MainActivity extends AppCompatActivity {
                     v.getContext().startActivity(intent);
                 }
             });
+            btnEscanear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(),QRScannerActivity.class);
+                    v.getContext().startActivity(intent);
+                }
+            });
+
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
