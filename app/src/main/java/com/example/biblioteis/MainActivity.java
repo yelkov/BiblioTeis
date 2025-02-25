@@ -126,6 +126,14 @@ public class MainActivity extends AppCompatActivity {
             btnLoguear.setText("LogOut");
             btnCatalogo.setVisibility(View.VISIBLE);
             btnPerfil.setVisibility(View.VISIBLE);
+
+            btnPerfil.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(),PerfilUsuarioActivity.class);
+                    v.getContext().startActivity(intent);
+                }
+            });
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
