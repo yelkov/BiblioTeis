@@ -180,6 +180,8 @@ public class DetallesActivity extends AppCompatActivity {
                 if(result != null){
                     Bitmap bitmap = BitmapFactory.decodeStream(result.byteStream());
                     imgLibroDetalle.setImageBitmap(bitmap);
+                }else{
+                    imgLibroDetalle.setImageResource(R.drawable.cover);
                 }
             }
 

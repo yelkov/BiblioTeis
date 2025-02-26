@@ -51,6 +51,8 @@ public class AdapterBooks extends RecyclerView.Adapter {
                 if(result != null){
                     Bitmap bitmap = BitmapFactory.decodeStream(result.byteStream());
                     viewHolder.imgLibro.setImageBitmap(bitmap);
+                }else{
+                    viewHolder.imgLibro.setImageResource(R.drawable.cover);
                 }
 
             }
