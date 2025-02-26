@@ -81,7 +81,11 @@ public class AdapterLendings extends RecyclerView.Adapter {
             }
         });
 
-
+        if (position % 2 == 0) {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.light_grey));
+        } else {
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+        }
         
     }
 

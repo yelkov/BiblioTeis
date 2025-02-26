@@ -3,4 +3,16 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#ff0000</color>
+    <color name="light_grey">#efefef</color>
+    <color name="grey">#dfdfdf</color>
+
+    <color name="primary_light">#c2edf7</color>
+    <color name="primary">#88c3cf</color>
+    <color name="primary_dark">#6099a5</color>
+
+    <color name="secondary_light">#38737f</color>
+    <color name="secondary_dark">#084f5a</color>
+
+    <color name="background_light">#c2edf7</color>
+    <color name="background_dark">#084f5a</color>
 </resources>

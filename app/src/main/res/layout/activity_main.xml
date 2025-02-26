@@ -71,7 +71,7 @@
                 android:id="@+id/rvRecomendaciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#efefef"/>
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,7 +106,7 @@
                 android:id="@+id/rvUltimosPublicados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#efefef"/>
+                />
 
 
         </LinearLayout>

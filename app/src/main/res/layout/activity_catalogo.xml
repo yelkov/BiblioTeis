@@ -47,10 +47,9 @@
         android:id="@+id/rvCatalogo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#efefef"
-        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLOBuscar" />
+        app:layout_constraintTop_toBottomOf="@id/linearLOBuscar"
+        android:scrollbars="vertical"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

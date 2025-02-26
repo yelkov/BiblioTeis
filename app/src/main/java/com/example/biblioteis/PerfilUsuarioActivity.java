@@ -6,11 +6,13 @@ import static android.view.View.VISIBLE;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -33,7 +35,7 @@ import okhttp3.ResponseBody;
 public class PerfilUsuarioActivity extends AppCompatActivity {
 
     ImageView imgPerfil;
-    TextView txtPerfilNombre, txtPerfilEmail;
+    TextView txtPerfilNombre, txtPerfilEmail, txtMasElementos;
     RecyclerView rvHistoricoLendings, rvActiveLendings;
     List<BookLending> historicoLendings, activeLendings;
     LinearLayout linearActiveLendings;
@@ -111,6 +113,19 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             }
         });
 
+        rvActiveLendings.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null) {
+                    int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                    int totalItems = layoutManager.getItemCount();
+
+                    txtMasElementos.setVisibility(lastVisibleItem < totalItems - 1 ? View.VISIBLE : View.GONE);
+                }
+            }
+        });
+
 
     }
 
@@ -119,6 +134,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         txtPerfilNombre = findViewById(R.id.txtPerfilNombre);
         txtPerfilEmail = findViewById(R.id.txtPerfilEmail);
         linearActiveLendings = findViewById(R.id.linearActiveLendings);
+        txtMasElementos = findViewById(R.id.txtMoreItems);
         historicoLendings = new ArrayList<>();
         activeLendings = new ArrayList<>();
         rvHistoricoLendings = findViewById(R.id.rvHistoricoLendings);
