@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     TextView txtUsuario, txtNombreUsuario;
     BookRepository br;
     MainActivityVM vm;
+    MenuConfig menuConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,39 +56,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         initializeViews();
-
-        setSupportActionBar(tbMain);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.menu, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                int id = menuItem.getItemId();
-                if(id == R.id.btnEscanear){
-                    Intent intent = new Intent(MainActivity.this,QRScannerActivity.class);
-                    startActivity(intent);
-                }
-                if(id == R.id.btnLoguear){
-                    Intent intent = new Intent(MainActivity.this,LoginActivity.class);
-                    startActivity(intent);
-                }
-                if(id == R.id.btnPerfil){
-                    User usuario = UserProvider.getInstance();
-                    if(usuario.getName() == null){
-                        Toast.makeText(MainActivity.this, "Usuario no logueado", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Intent intent = new Intent(MainActivity.this,PerfilUsuarioActivity.class);
-                        startActivity(intent);
-                    }
-                }
-                return false;
-            }
-        });
+        menuConfig = new MenuConfig(this,tbMain);
+        addMenuProvider(menuConfig);
 
         vm = new ViewModelProvider(this).get(MainActivityVM.class);
         vm.ultimosPublicados.observe(this, books -> {
@@ -157,20 +127,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        MenuItem btnPerfil = tbMain.getMenu().findItem(R.id.btnPerfil);
-
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
             txtUsuario.setText("Usuario: ");
             txtNombreUsuario.setText(usuario.getName());
-            btnPerfil.getIcon().setTint(getColor(R.color.secondary_dark));
+            menuConfig.updateToolbarProfileTint(R.color.secondary_dark);
 
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
-            if(btnPerfil != null){
-                btnPerfil.getIcon().setTint(getColor(R.color.grey));
-            }
+            menuConfig.updateToolbarProfileTint(R.color.grey);
+
         }
         cargarLibros();
     }
