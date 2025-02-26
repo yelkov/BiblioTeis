@@ -54,7 +54,7 @@ public class DetallesActivity extends AppCompatActivity {
             return insets;
         });
 
-        setViews();
+        initializeViews();
 
         Intent intent = getIntent();
         Integer bookId = intent.getIntExtra(AdapterBooks.BOOK_ID,0);
@@ -91,7 +91,7 @@ public class DetallesActivity extends AppCompatActivity {
             }
         });
     }
-    private void setViews() {
+    private void initializeViews() {
         txtTitulo = findViewById(R.id.txtTitulo);
         txtAutor = findViewById(R.id.txtAuthor);
         txtIsbn = findViewById(R.id.txtIsbn);

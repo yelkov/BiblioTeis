@@ -45,17 +45,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        txtNombreUsuario = findViewById(R.id.txtNombreUsuario);
-        txtNombreUsuario.setText(" ");
-        txtUsuario = findViewById(R.id.txtUsuario);
-        txtUsuario.setText(" ");
-
-        btnLoguear = findViewById(R.id.btnLoguear);
-        btnEscanear = findViewById(R.id.btnEscanear);
-        rvUltimosPublicados = findViewById(R.id.rvUltimosPublicados);
-        rvUltimosPublicados.setLayoutManager(new LinearLayoutManager(this));
-        rvRecomendaciones = findViewById(R.id.rvRecomendaciones);
-        rvRecomendaciones.setLayoutManager(new LinearLayoutManager(this));
+        initializeViews();
 
         btnLoguear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,23 +55,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnCatalogo = findViewById(R.id.btnCatalogo);
-        btnPerfil = findViewById(R.id.btnPerfil);
-
         vm = new ViewModelProvider(this).get(MainActivityVM.class);
-
-
         vm.ultimosPublicados.observe(this, books -> {
             rvUltimosPublicados.setAdapter(new AdapterBooks(books));
         });
-
         vm.recomendaciones.observe(this,books ->{
             rvRecomendaciones.setAdapter(new AdapterBooks(books));
         });
 
         br = new BookRepository();
-
-
         cargarLibros();
 
         btnCatalogo.setOnClickListener(new View.OnClickListener() {
@@ -94,18 +76,37 @@ public class MainActivity extends AppCompatActivity {
 
     }//fin onCreate
 
+    private void initializeViews() {
+        txtNombreUsuario = findViewById(R.id.txtNombreUsuario);
+        txtNombreUsuario.setText(" ");
+        txtUsuario = findViewById(R.id.txtUsuario);
+        txtUsuario.setText(" ");
+
+        btnLoguear = findViewById(R.id.btnLoguear);
+        btnEscanear = findViewById(R.id.btnEscanear);
+        btnCatalogo = findViewById(R.id.btnCatalogo);
+        btnPerfil = findViewById(R.id.btnPerfil);
+
+        rvUltimosPublicados = findViewById(R.id.rvUltimosPublicados);
+        rvUltimosPublicados.setLayoutManager(new LinearLayoutManager(this));
+        rvRecomendaciones = findViewById(R.id.rvRecomendaciones);
+        rvRecomendaciones.setLayoutManager(new LinearLayoutManager(this));
+    }
+
     private void cargarLibros() {
         br.getBooks(new BookRepository.ApiCallback<List<Book>>(){
 
             @Override
             public void onSuccess(List<Book> result) {
-                List<Book> ultimosPublicados = result.stream().sorted(Comparator.comparing(Book::getPublishedDate).reversed())
+                List<Book> ultimosPublicados = result.stream()
+                        .sorted(Comparator.comparing(Book::getPublishedDate).reversed())
                         .limit(5)
                         .collect(Collectors.toList());
                 vm.ultimosPublicados.setValue(ultimosPublicados);
 
                 Collections.shuffle(result);
                 List<Book> recomendaciones = result.stream()
+                        .filter(Book::isAvailable)
                         .limit(2)
                         .collect(Collectors.toList());
                 vm.recomendaciones.setValue(recomendaciones);
