@@ -8,7 +8,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +36,7 @@ import java.util.stream.Collectors;
 public class MainActivity extends AppCompatActivity {
     Toolbar tbMain;
     RecyclerView rvUltimosPublicados, rvRecomendaciones;
-    Button  btnCatalogo, btnPerfil;
+    Button  btnCatalogo;
     TextView txtUsuario, txtNombreUsuario;
     BookRepository br;
     MainActivityVM vm;
@@ -77,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this,LoginActivity.class);
                     startActivity(intent);
                 }
+                if(id == R.id.btnPerfil){
+                    User usuario = UserProvider.getInstance();
+                    if(usuario.getName() == null){
+                        Toast.makeText(MainActivity.this, "Usuario no logueado", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Intent intent = new Intent(MainActivity.this,PerfilUsuarioActivity.class);
+                        startActivity(intent);
+                    }
+                }
                 return false;
             }
         });
@@ -111,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
         txtUsuario.setText(" ");
 
         btnCatalogo = findViewById(R.id.btnCatalogo);
-        btnPerfil = findViewById(R.id.btnPerfil);
 
         rvUltimosPublicados = findViewById(R.id.rvUltimosPublicados);
         rvUltimosPublicados.setLayoutManager(new LinearLayoutManager(this));
@@ -149,35 +156,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        MenuItem btnPerfil = tbMain.getMenu().findItem(R.id.btnPerfil);
+
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
             txtUsuario.setText("Usuario: ");
             txtNombreUsuario.setText(usuario.getName());
-            btnCatalogo.setVisibility(View.VISIBLE);
-            btnPerfil.setVisibility(View.VISIBLE);
-
-            btnPerfil.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(),PerfilUsuarioActivity.class);
-                    v.getContext().startActivity(intent);
-                }
-            });
-            /*
-            btnEscanear.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-             */
+            btnPerfil.getIcon().setTint(getColor(R.color.secondary_dark));
 
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
-            btnCatalogo.setVisibility(View.GONE);
-            btnPerfil.setVisibility(View.GONE);
+            if(btnPerfil != null){
+                btnPerfil.getIcon().setTint(getColor(R.color.grey));
+            }
         }
         cargarLibros();
     }

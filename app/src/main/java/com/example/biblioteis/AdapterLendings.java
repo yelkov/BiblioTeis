@@ -55,8 +55,8 @@ public class AdapterLendings extends RecyclerView.Adapter {
                 viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.red));
                 viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.red));
             }else{
-                viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.white));
-                viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.white));
+                viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.black));
+                viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.black));
             }
             viewHolder.txtReturningDate.setText(formatearFecha(limitDate));
         }

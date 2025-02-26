@@ -8,6 +8,12 @@
         android:title="scan"
         app:showAsAction="always|withText" />
     <item
+        android:id="@+id/btnPerfil"
+        android:icon="@drawable/profile"
+        app:iconTint="@color/grey"
+        android:title="btnPerfil"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/btnLoguear"
         android:icon="@drawable/login"
         app:iconTint="@color/secondary_dark"
