@@ -60,9 +60,9 @@ public class AdapterBooks extends RecyclerView.Adapter {
             }
         });
         if(book.isAvailable()){
-            viewHolder.imgDisponible.setImageResource(R.drawable.color_verde);
+            viewHolder.imgDisponible.setImageResource(R.drawable.ok);
         }else{
-            viewHolder.imgDisponible.setImageResource(R.drawable.color_rosa);
+            viewHolder.imgDisponible.setImageResource(R.drawable.x);
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -55,8 +55,8 @@ public class AdapterLendings extends RecyclerView.Adapter {
                 viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.red));
                 viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.red));
             }else{
-                viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.black));
-                viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.black));
+                viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.white));
+                viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.white));
             }
             viewHolder.txtReturningDate.setText(formatearFecha(limitDate));
         }
@@ -82,9 +82,9 @@ public class AdapterLendings extends RecyclerView.Adapter {
         });
 
         if (position % 2 == 0) {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.light_grey));
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.primary_dark));
         } else {
-            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.grey));
+            holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.secondary_light));
         }
         
     }
