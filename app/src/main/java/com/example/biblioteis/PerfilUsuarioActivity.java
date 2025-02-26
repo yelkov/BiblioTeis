@@ -51,7 +51,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             return insets;
         });
 
-        setViews();
+        initializeViews();
 
         User usuario = UserProvider.getInstance();
         txtPerfilNombre.setText(usuario.getName());
@@ -129,14 +129,16 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
     }
 
-    private void setViews() {
+    private void initializeViews() {
         imgPerfil = findViewById(R.id.imgPerfil);
         txtPerfilNombre = findViewById(R.id.txtPerfilNombre);
         txtPerfilEmail = findViewById(R.id.txtPerfilEmail);
         linearActiveLendings = findViewById(R.id.linearActiveLendings);
         txtMasElementos = findViewById(R.id.txtMoreItems);
+
         historicoLendings = new ArrayList<>();
         activeLendings = new ArrayList<>();
+
         rvHistoricoLendings = findViewById(R.id.rvHistoricoLendings);
         rvHistoricoLendings.setLayoutManager(new LinearLayoutManager(this));
         rvActiveLendings = findViewById(R.id.rvActiveLendings);

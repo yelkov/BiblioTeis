@@ -33,10 +33,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        btnLogin = findViewById(R.id.btnLogin);
-        btnCancelar = findViewById(R.id.btnCancelar);
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
+        initializeViews();
 
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
@@ -95,5 +92,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void initializeViews() {
+        btnLogin = findViewById(R.id.btnLogin);
+        btnCancelar = findViewById(R.id.btnCancelar);
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
     }
 }

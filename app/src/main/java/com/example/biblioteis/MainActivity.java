@@ -2,15 +2,23 @@ package com.example.biblioteis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.view.MenuProvider;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,9 +35,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
+    Toolbar tbMain;
     RecyclerView rvUltimosPublicados, rvRecomendaciones;
-    Button btnLoguear, btnCatalogo, btnPerfil;
-    ImageButton btnEscanear;
+    Button  btnCatalogo, btnPerfil;
     TextView txtUsuario, txtNombreUsuario;
     BookRepository br;
     MainActivityVM vm;
@@ -37,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("MainActivity", "onCreate: started");
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -47,11 +57,27 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews();
 
-        btnLoguear.setOnClickListener(new View.OnClickListener() {
+        setSupportActionBar(tbMain);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        addMenuProvider(new MenuProvider() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(),LoginActivity.class);
-                startActivity(intent);
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.menu, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if(id == R.id.btnEscanear){
+                    Intent intent = new Intent(MainActivity.this,QRScannerActivity.class);
+                    startActivity(intent);
+                }
+                if(id == R.id.btnLoguear){
+                    Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+                    startActivity(intent);
+                }
+                return false;
             }
         });
 
@@ -77,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
     }//fin onCreate
 
     private void initializeViews() {
+        tbMain = findViewById(R.id.tbMain);
+
         txtNombreUsuario = findViewById(R.id.txtNombreUsuario);
         txtNombreUsuario.setText(" ");
         txtUsuario = findViewById(R.id.txtUsuario);
         txtUsuario.setText(" ");
 
-        btnLoguear = findViewById(R.id.btnLoguear);
-        btnEscanear = findViewById(R.id.btnEscanear);
         btnCatalogo = findViewById(R.id.btnCatalogo);
         btnPerfil = findViewById(R.id.btnPerfil);
 
@@ -125,9 +151,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
-            txtUsuario.setText("User: ");
+            txtUsuario.setText("Usuario: ");
             txtNombreUsuario.setText(usuario.getName());
-            btnLoguear.setText("LogOut");
             btnCatalogo.setVisibility(View.VISIBLE);
             btnPerfil.setVisibility(View.VISIBLE);
 
@@ -138,18 +163,19 @@ public class MainActivity extends AppCompatActivity {
                     v.getContext().startActivity(intent);
                 }
             });
+            /*
             btnEscanear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(),QRScannerActivity.class);
-                    v.getContext().startActivity(intent);
+
                 }
             });
+
+             */
 
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
-            btnLoguear.setText("LogIn");
             btnCatalogo.setVisibility(View.GONE);
             btnPerfil.setVisibility(View.GONE);
         }
