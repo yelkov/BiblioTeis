@@ -48,6 +48,7 @@ public class QRScannerActivity extends AppCompatActivity {
                 Toast.makeText(this, "Se ha producido un error al escanear", Toast.LENGTH_SHORT).show();
                 finish();
             }else{
+                Toast.makeText(this, "Leyendo: "+intentResult.getContents(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this,DetallesActivity.class);
                 intent.putExtra(AdapterBooks.BOOK_ID,1); //vamos a hardcodear el id del libro, pero aquí deberiamos obtener este id del qr que se vaya a leer
                 startActivity(intent);
