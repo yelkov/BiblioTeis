@@ -1,14 +1,11 @@
 package com.example.biblioteis;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,8 +34,9 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     TextView txtPerfilNombre, txtPerfilEmail;
     RecyclerView rvHistoricoLendings, rvActiveLendings;
     List<BookLending> historicoLendings, activeLendings;
-    LinearLayout linearActiveLendings;
+    PerfilUsuarioVM vm;
     User usuario;
+    UserRepository ur;
     Toolbar tbPerfil;
 
 
@@ -79,7 +77,7 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             });
         }
 
-        PerfilUsuarioVM vm = new ViewModelProvider(this).get(PerfilUsuarioVM.class);
+        vm = new ViewModelProvider(this).get(PerfilUsuarioVM.class);
 
         vm.historicoLendings.observe(this, lendings ->{
             rvHistoricoLendings.setAdapter(new AdapterLendings(lendings));
@@ -89,10 +87,16 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
             rvActiveLendings.setAdapter(new AdapterLendings(bookLendings));
         });
 
-        UserRepository ur = new UserRepository();
+        ur = new UserRepository();
+        askForUser(vm);
+    }
+
+    private void askForUser(PerfilUsuarioVM vm) {
         ur.getUserById(usuario.getId(), new BookRepository.ApiCallback<User>() {
             @Override
             public void onSuccess(User result) {
+                historicoLendings.clear();
+                activeLendings.clear();
                 List<BookLending> allLendings = result.getBookLendings();
                 for (BookLending lending : allLendings){
                     if(lending.getReturnDate() != null){
@@ -103,20 +107,14 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 }
                 vm.historicoLendings.setValue(historicoLendings);
                 vm.activeLendings.setValue(activeLendings);
-                if(activeLendings.size() == 0){
-                    linearActiveLendings.setVisibility(GONE);
-                }else{
-                    linearActiveLendings.setVisibility(VISIBLE);
-                }
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(PerfilUsuarioActivity.this, "Se ha producido un error de conexión.", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
-
-
     }
 
     @Override
@@ -125,6 +123,8 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         usuario = UserProvider.getInstance();
         if(usuario.getName() == null){
             finish(); //en caso de que el usuario haga Log Out partiendo de PerfilUsuarioActivity, cerramos la activity cuando vuelva a esta
+        }else{
+            askForUser(vm); //en caso de que el usuario vuelva desde el detalle de un libro, recargamos los lendings por si se producen cambios
         }
     }
 
@@ -132,7 +132,6 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         imgPerfil = findViewById(R.id.imgPerfil);
         txtPerfilNombre = findViewById(R.id.txtPerfilNombre);
         txtPerfilEmail = findViewById(R.id.txtPerfilEmail);
-        linearActiveLendings = findViewById(R.id.linearActiveLendings);
         tbPerfil = findViewById(R.id.tbPerfil);
 
         historicoLendings = new ArrayList<>();
