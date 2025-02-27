@@ -28,6 +28,7 @@ public class MenuConfig implements MenuProvider {
     @Override
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.menu, menu);
+        updateToolbarProfileTint();
     }
 
     @Override
@@ -37,11 +38,11 @@ public class MenuConfig implements MenuProvider {
             Intent intent = new Intent(context,QRScannerActivity.class);
             context.startActivity(intent);
         }
-        if(id == R.id.btnLoguear){
+        if(id == R.id.btnLoguear && !(context instanceof LoginActivity)){
             Intent intent = new Intent(context,LoginActivity.class);
             context.startActivity(intent);
         }
-        if(id == R.id.btnPerfil){
+        if(id == R.id.btnPerfil && !(context instanceof PerfilUsuarioActivity)){
             User usuario = UserProvider.getInstance();
             if(usuario.getName() == null){
                 Toast.makeText(context, "Usuario no logueado", Toast.LENGTH_SHORT).show();
@@ -53,9 +54,11 @@ public class MenuConfig implements MenuProvider {
         return false;
     }
 
-    public void updateToolbarProfileTint(int color) {
+    public void updateToolbarProfileTint() {
         MenuItem btnPerfil = toolbar.getMenu().findItem(R.id.btnPerfil);
         if (btnPerfil != null) {
+            User usuario = UserProvider.getInstance();
+            int color = (usuario.getName() != null) ? R.color.secondary_dark : R.color.grey;
             btnPerfil.getIcon().setTint(context.getColor(color));
         }
     }

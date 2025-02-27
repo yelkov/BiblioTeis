@@ -3,21 +3,16 @@ package com.example.biblioteis;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
-import androidx.core.view.MenuProvider;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -131,15 +126,14 @@ public class MainActivity extends AppCompatActivity {
         if(usuario.getName() != null){
             txtUsuario.setText("Usuario: ");
             txtNombreUsuario.setText(usuario.getName());
-            menuConfig.updateToolbarProfileTint(R.color.secondary_dark);
 
         }else{
             txtUsuario.setText(" ");
             txtNombreUsuario.setText(" ");
-            menuConfig.updateToolbarProfileTint(R.color.grey);
 
         }
         cargarLibros();
+        menuConfig.updateToolbarProfileTint();
     }
 }
 

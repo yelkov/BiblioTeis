@@ -6,14 +6,13 @@ import static android.view.View.VISIBLE;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +38,9 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
     RecyclerView rvHistoricoLendings, rvActiveLendings;
     List<BookLending> historicoLendings, activeLendings;
     LinearLayout linearActiveLendings;
+    User usuario;
+    Toolbar tbPerfil;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +54,9 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
         });
 
         initializeViews();
+        addMenuProvider(new MenuConfig(this,tbPerfil));
 
-        User usuario = UserProvider.getInstance();
+        usuario = UserProvider.getInstance();
         txtPerfilNombre.setText(usuario.getName());
         txtPerfilEmail.setText(usuario.getEmail());
         if(usuario.getProfilePicture() == null || usuario.getProfilePicture().isEmpty()){
@@ -116,11 +119,21 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        usuario = UserProvider.getInstance();
+        if(usuario.getName() == null){
+            finish(); //en caso de que el usuario haga Log Out partiendo de PerfilUsuarioActivity, cerramos la activity cuando vuelva a esta
+        }
+    }
+
     private void initializeViews() {
         imgPerfil = findViewById(R.id.imgPerfil);
         txtPerfilNombre = findViewById(R.id.txtPerfilNombre);
         txtPerfilEmail = findViewById(R.id.txtPerfilEmail);
         linearActiveLendings = findViewById(R.id.linearActiveLendings);
+        tbPerfil = findViewById(R.id.tbPerfil);
 
         historicoLendings = new ArrayList<>();
         activeLendings = new ArrayList<>();

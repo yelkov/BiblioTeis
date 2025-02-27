@@ -1,6 +1,5 @@
 package com.example.biblioteis;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin, btnCancelar;
     EditText etEmail, etPassword;
+    Toolbar tbLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +35,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         initializeViews();
+        MenuConfig menuConfig = new MenuConfig(this,tbLogin);
+        addMenuProvider(menuConfig);
 
         User usuario = UserProvider.getInstance();
         if(usuario.getName() != null){
             etEmail.setText(usuario.getEmail());
             etPassword.setText(usuario.getPasswordHash());
-            btnLogin.setText("LogOut");
+            btnLogin.setText("Log Out");
         }
 
         UserRepository ur = new UserRepository();
@@ -99,5 +102,6 @@ public class LoginActivity extends AppCompatActivity {
         btnCancelar = findViewById(R.id.btnCancelar);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+        tbLogin = findViewById(R.id.tbLogin);
     }
 }

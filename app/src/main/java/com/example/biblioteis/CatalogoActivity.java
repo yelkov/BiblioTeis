@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,6 +38,8 @@ public class CatalogoActivity extends AppCompatActivity {
     EditText etBuscar;
     CatalogoVM vm;
     BookRepository br;
+    Toolbar tbCatalogo;
+    MenuConfig menuConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +52,9 @@ public class CatalogoActivity extends AppCompatActivity {
             return insets;
         });
 
-        btnVolver = findViewById(R.id.btnVolverCatalogo);
-        etBuscar = findViewById(R.id.etBuscar);
-        rvCatalogo = findViewById(R.id.rvCatalogo);
-        rvCatalogo.setLayoutManager(new LinearLayoutManager(this));
+        initializeViews();
+        menuConfig = new MenuConfig(this,tbCatalogo);
+        addMenuProvider(menuConfig);
 
         vm = new ViewModelProvider(this).get(CatalogoVM.class);
         vm.books.observe(this, books -> {
@@ -87,11 +89,20 @@ public class CatalogoActivity extends AppCompatActivity {
         });
     }
 
+    private void initializeViews() {
+        btnVolver = findViewById(R.id.btnVolverCatalogo);
+        etBuscar = findViewById(R.id.etBuscar);
+        tbCatalogo = findViewById(R.id.tbCatalogo);
+
+        rvCatalogo = findViewById(R.id.rvCatalogo);
+        rvCatalogo.setLayoutManager(new LinearLayoutManager(this));
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         cargarLibros();
-
+        menuConfig.updateToolbarProfileTint();
     }
 
     private void filtrarLibros() {
