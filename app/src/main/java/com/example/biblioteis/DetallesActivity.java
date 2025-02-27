@@ -1,7 +1,5 @@
 package com.example.biblioteis;
 
-import static android.view.View.VISIBLE;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -36,12 +36,16 @@ import okhttp3.ResponseBody;
 
 public class DetallesActivity extends AppCompatActivity {
 
-    TextView txtTitulo, txtAutor, txtIsbn, txtDisponible, txtFecha;
+    TextView txtTitulo, txtAutor, txtIsbn, txtFechaDevolucion, txtFechaPublicacion, txtDetallesUsuario, txtDetallesNombre;
     ImageView imgLibroDetalle;
     Button btnReservar, btnVolver;
-    Book currentBook;
     BookLending lastLending;
     LinearLayout linearDevolucion;
+    Integer bookId;
+    BookRepository br;
+    BookLendingRepository blr;
+    Toolbar tbDetalles;
+    MenuConfig menuConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,23 +59,16 @@ public class DetallesActivity extends AppCompatActivity {
         });
 
         initializeViews();
+        checkUserLogin();
+        menuConfig = new MenuConfig(this, tbDetalles);
+        addMenuProvider(menuConfig);
 
         Intent intent = getIntent();
-        Integer bookId = intent.getIntExtra(AdapterBooks.BOOK_ID,0);
-        BookRepository br = new BookRepository();
-        BookLendingRepository blr = new BookLendingRepository();
+        bookId = intent.getIntExtra(AdapterBooks.BOOK_ID,0);
+        br = new BookRepository();
+        blr = new BookLendingRepository();
 
-        br.getBookById(bookId, new BookRepository.ApiCallback<Book>() {
-            @Override
-            public void onSuccess(Book result) {
-                setBook(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Toast.makeText(DetallesActivity.this, "Se ha producido un error en la conexión", Toast.LENGTH_SHORT).show();
-            }
-        });
+        askForBook();
 
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,30 +87,70 @@ public class DetallesActivity extends AppCompatActivity {
                 }
             }
         });
+    }//fin del OnCreate
+
+    private void checkUserLogin() {
+        User usuario = UserProvider.getInstance();
+        if(usuario.getName() != null){
+            btnReservar.setEnabled(true);
+            txtDetallesUsuario.setText("Usuario: ");
+            txtDetallesNombre.setText(usuario.getName());
+        }else{
+            btnReservar.setEnabled(false);
+            txtDetallesUsuario.setText("");
+            txtDetallesNombre.setText("");
+        }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        askForBook();
+        checkUserLogin();
+        menuConfig.updateToolbarProfileTint();
+    }
+
+    private void askForBook() {
+        br.getBookById(bookId, new BookRepository.ApiCallback<Book>() {
+            @Override
+            public void onSuccess(Book result) {
+                setBook(result);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(DetallesActivity.this, "Se ha producido un error en la conexión", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void initializeViews() {
         txtTitulo = findViewById(R.id.txtTitulo);
         txtAutor = findViewById(R.id.txtAuthor);
         txtIsbn = findViewById(R.id.txtIsbn);
-        txtDisponible = findViewById(R.id.txtDisponible);
-        txtFecha = findViewById(R.id.txtFecha);
+        txtFechaDevolucion = findViewById(R.id.txtFechaDevolucion);
+        txtFechaPublicacion = findViewById(R.id.txtFechaPublicacion);
+        txtDetallesUsuario = findViewById(R.id.txtDetallesUsuario);
+        txtDetallesNombre = findViewById(R.id.txtDetallesNombre);
         imgLibroDetalle = findViewById(R.id.imgLibroDetalle);
         btnReservar = findViewById(R.id.btnReservar);
         btnVolver = findViewById(R.id.btnVolverDetalle);
         linearDevolucion = findViewById(R.id.linearDevolucion);
+        tbDetalles = findViewById(R.id.tbDetalles);
     }
+
     private void devolverLibro(BookLendingRepository blr) {
         blr.returnBook(lastLending.getId(), new BookRepository.ApiCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 Toast.makeText(DetallesActivity.this, "Libro devuelto", Toast.LENGTH_SHORT).show();
                 btnReservar.setText("Reservar");
-                txtDisponible.setText("Sí");
+                linearDevolucion.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(DetallesActivity.this, "Se ha producido un error al devolver el libro", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -124,33 +161,32 @@ public class DetallesActivity extends AppCompatActivity {
             public void onSuccess(Boolean result) {
                 Toast.makeText(DetallesActivity.this, "Se ha reservado el libro", Toast.LENGTH_SHORT).show();
                 btnReservar.setText("Devolver");
-                txtDisponible.setText("No");
+                linearDevolucion.setVisibility(View.VISIBLE);
+                LocalDateTime fechaDevolucion = LocalDateTime.now().plusWeeks(2);
+                setFechaDevolucion(fechaDevolucion);
             }
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(DetallesActivity.this, "Se ha producido un error al reservar el libro", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void setBook(Book book){
-        currentBook = book;
         txtTitulo.setText(book.getTitle());
         txtAutor.setText(book.getAuthor());
 
         LocalDateTime publishedDate = LocalDateTime.parse(book.getPublishedDate());
-        txtFecha.setText(formatearFecha(publishedDate));
-
-        if(!book.isAvailable()){
-            linearDevolucion.setVisibility(VISIBLE);
-            txtDisponible.setText("No");
-        }
+        txtFechaPublicacion.setText(formatearFecha(publishedDate));
 
         txtIsbn.setText(book.getIsbn());
 
         setBookImage(book);
+        setLendingViews(book);
+    }
 
+    private void setLendingViews(Book book) {
         if(!book.isAvailable()){
             List<BookLending> lendings = book.getBookLendings();
             Optional<BookLending> optLastLending = lendings.stream().sorted(Comparator.comparing(BookLending::getId).reversed()).findFirst();
@@ -160,7 +196,8 @@ public class DetallesActivity extends AppCompatActivity {
                 LocalDateTime lendingDate = LocalDateTime.parse(lastLending.getLendDate());
                 LocalDateTime returningDate = lendingDate.plusWeeks(2);
 
-                txtDisponible.setText(formatearFecha(returningDate));
+                linearDevolucion.setVisibility(View.VISIBLE);
+                setFechaDevolucion(returningDate);
 
                 User currentUser = UserProvider.getInstance();
                 if(lastLending.getUserId() == currentUser.getId()){
@@ -169,6 +206,9 @@ public class DetallesActivity extends AppCompatActivity {
                     btnReservar.setEnabled(false);
                 }
             }
+        }else{
+            linearDevolucion.setVisibility(View.GONE);
+            btnReservar.setText("Reservar");
         }
     }
 
@@ -187,7 +227,7 @@ public class DetallesActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Throwable t) {
-
+                Toast.makeText(DetallesActivity.this, "Se ha producido un error al cargar la imagen del libro", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -195,5 +235,14 @@ public class DetallesActivity extends AppCompatActivity {
     private String formatearFecha(LocalDateTime fecha){
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return fecha.format(dateFormat);
+    }
+
+    private void setFechaDevolucion(LocalDateTime fecha){
+        if(fecha.isBefore(LocalDateTime.now())){
+            txtFechaDevolucion.setTextColor(ContextCompat.getColor(this,R.color.red));
+        }else{
+            txtFechaDevolucion.setTextColor(ContextCompat.getColor(this,R.color.black));
+        }
+        txtFechaDevolucion.setText(formatearFecha(fecha));
     }
 }

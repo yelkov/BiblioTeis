@@ -1,13 +1,11 @@
 package com.example.biblioteis;
-
-import static androidx.core.widget.TextViewKt.addTextChangedListener;
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,18 +14,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.biblioteis.API.models.Book;
-import com.example.biblioteis.API.models.BookLending;
-import com.example.biblioteis.API.repository.BookLendingRepository;
+import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +34,7 @@ public class CatalogoActivity extends AppCompatActivity {
     BookRepository br;
     Toolbar tbCatalogo;
     MenuConfig menuConfig;
+    TextView txtCatalogoUsuario, txtCatalogoNombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +48,9 @@ public class CatalogoActivity extends AppCompatActivity {
         });
 
         initializeViews();
+
+        comprobarLogin();
+
         menuConfig = new MenuConfig(this,tbCatalogo);
         addMenuProvider(menuConfig);
 
@@ -74,7 +72,6 @@ public class CatalogoActivity extends AppCompatActivity {
         etBuscar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -84,7 +81,6 @@ public class CatalogoActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
@@ -93,6 +89,8 @@ public class CatalogoActivity extends AppCompatActivity {
         btnVolver = findViewById(R.id.btnVolverCatalogo);
         etBuscar = findViewById(R.id.etBuscar);
         tbCatalogo = findViewById(R.id.tbCatalogo);
+        txtCatalogoUsuario = findViewById(R.id.txtCatalogoUsuario);
+        txtCatalogoNombre = findViewById(R.id.txtCatalogoNombre);
 
         rvCatalogo = findViewById(R.id.rvCatalogo);
         rvCatalogo.setLayoutManager(new LinearLayoutManager(this));
@@ -103,6 +101,18 @@ public class CatalogoActivity extends AppCompatActivity {
         super.onResume();
         cargarLibros();
         menuConfig.updateToolbarProfileTint();
+        comprobarLogin();
+    }
+
+    private void comprobarLogin() {
+        User usuario = UserProvider.getInstance();
+        if (usuario.getName() != null){
+            txtCatalogoUsuario.setText("Usuario: ");
+            txtCatalogoNombre.setText(usuario.getName());
+        }else{
+            txtCatalogoUsuario.setText("");
+            txtCatalogoNombre.setText("");
+        }
     }
 
     private void filtrarLibros() {

@@ -69,11 +69,9 @@ public class AdapterBooks extends RecyclerView.Adapter {
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(UserProvider.getInstance().getName() != null){
                     Intent intent = new Intent(v.getContext(), DetallesActivity.class);
                     intent.putExtra(BOOK_ID,book.getId());
                     v.getContext().startActivity(intent);
-                }
             }
         });
 
