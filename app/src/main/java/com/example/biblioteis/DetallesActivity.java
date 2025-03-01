@@ -174,16 +174,21 @@ public class DetallesActivity extends AppCompatActivity {
     }
 
     public void setBook(Book book){
-        txtTitulo.setText(book.getTitle());
-        txtAutor.setText(book.getAuthor());
+        if(book != null){
+            txtTitulo.setText(book.getTitle());
+            txtAutor.setText(book.getAuthor());
 
-        LocalDateTime publishedDate = LocalDateTime.parse(book.getPublishedDate());
-        txtFechaPublicacion.setText(formatearFecha(publishedDate));
+            LocalDateTime publishedDate = LocalDateTime.parse(book.getPublishedDate());
+            txtFechaPublicacion.setText(formatearFecha(publishedDate));
 
-        txtIsbn.setText(book.getIsbn());
+            txtIsbn.setText(book.getIsbn());
 
-        setBookImage(book);
-        setLendingViews(book);
+            setBookImage(book);
+            setLendingViews(book);
+        }else{
+            Toast.makeText(this, "El libro solicitado no existe", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void setLendingViews(Book book) {

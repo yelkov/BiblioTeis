@@ -2,12 +2,18 @@ package com.example.biblioteis;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
@@ -73,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        registerForContextMenu(btnCatalogo); //vamos a poner un menu contextual en el botón de catálogo para permitir introducir manualmente un código de libro
+
     }//fin onCreate
 
     private void initializeViews() {
@@ -134,6 +142,46 @@ public class MainActivity extends AppCompatActivity {
         }
         cargarLibros();
         menuConfig.updateToolbarProfileTint();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getMenuInflater().inflate(R.menu.menucontextual,menu);
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.btnCodigo){
+            mostrarDialogoCodigo();
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    private void mostrarDialogoCodigo(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Ingresa código de libro manualmente");
+
+        EditText etCodigo = new EditText(this);
+        etCodigo.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(etCodigo);
+
+        builder.setPositiveButton("Aceptar",((dialog, which) -> {
+            try{
+                Integer codigo = Integer.parseInt(etCodigo.getText().toString());
+                Intent intent = new Intent(this, DetallesActivity.class);
+                intent.putExtra(AdapterBooks.BOOK_ID,codigo);
+                startActivity(intent);
+            }catch (NumberFormatException e){
+                dialog.cancel();
+            }
+
+        }));
+
+        builder.setNegativeButton("Cancelar",((dialog, which) -> dialog.cancel()));
+
+        builder.show();
     }
 }
 
