@@ -44,4 +44,6 @@ dependencies {
     implementation(libs.converter.gson)
     implementation("com.journeyapps:zxing-android-embedded:4.1.0")
     implementation("com.google.zxing:core:3.3.0")
+    implementation(libs.security.crypto)
+    implementation(libs.preference)
 }

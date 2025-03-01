@@ -1,6 +1,9 @@
 package com.example.biblioteis;
 
+import android.content.SharedPreferences;
+import android.net.eap.EapSessionConfig;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,13 +15,22 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.UserRepository;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 public class LoginActivity extends AppCompatActivity {
 
+    public static final String IS_LOGGED = "IS_LOGGED";
+    public static final String USER_EMAIL = "USER_EMAIL";
+    public static final String PASSWORD = "PASSWORD";
+    public static final String ENCRYPTEDSHARE = "ENCRYPTEDSHARE";
     private Button btnLogin, btnCancelar;
     EditText etEmail, etPassword;
     Toolbar tbLogin;
@@ -68,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                 usuario.setDateJoined(result.getDateJoined());
                                 usuario.setPasswordHash(result.getPasswordHash());
                                 usuario.setProfilePicture(result.getProfilePicture());
+                                saveUserPreferences(usuario.getEmail(),etPassword.getText().toString(),true);
                                 finish();
                             }
                         }
@@ -82,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(LoginActivity.this, "Cerrando sesión", Toast.LENGTH_LONG).show();
                     UserProvider.logout();
+                    saveUserPreferences(null,null,false);
                     finish();
                 }
 
@@ -103,5 +117,32 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         tbLogin = findViewById(R.id.tbLogin);
+    }
+
+    private void saveUserPreferences(String email, String password, Boolean isLogged){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putBoolean(IS_LOGGED,isLogged);
+        editor.putString(USER_EMAIL,email);
+        editor.apply();
+
+        MasterKey mk = null;
+        try{
+            mk = new MasterKey.Builder(this).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build();
+            SharedPreferences spEncrypted = EncryptedSharedPreferences.create(this, ENCRYPTEDSHARE,
+                    mk,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+            SharedPreferences.Editor editorEncrypted = spEncrypted.edit();
+            editorEncrypted.putString(PASSWORD,password);
+            editorEncrypted.apply();
+
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
