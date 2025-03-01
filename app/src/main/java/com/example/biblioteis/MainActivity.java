@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -148,12 +149,17 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         getMenuInflater().inflate(R.menu.menucontextual,menu);
         super.onCreateContextMenu(menu, v, menuInfo);
+        MenuItem itemCodigo = menu.findItem(R.id.itemCodigo);
+        itemCodigo.setVisible(true);
+        MenuItem itemFavorito = menu.findItem(R.id.itemFavorito);
+        itemFavorito.setVisible(false);
+
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.btnCodigo){
+        if(id == R.id.itemCodigo){
             mostrarDialogoCodigo();
         }
         return super.onContextItemSelected(item);

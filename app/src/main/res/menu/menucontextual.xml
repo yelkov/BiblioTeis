@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/btnCodigo"
+        android:id="@+id/itemCodigo"
         android:title="Introducir código" />
+    <item
+        android:id="@+id/itemFavorito"
+        android:title="Marcar Favorito"
+        android:visible="false" />
 </menu>

@@ -1,12 +1,17 @@
 package com.example.biblioteis;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -20,11 +25,51 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 
-public class AdapterBooks extends RecyclerView.Adapter {
-
+public class AdapterBooks extends RecyclerView.Adapter{
     public static final String BOOK_ID = "bookId";
     List<Book> books;
     ImageRepository imageRepository;
+
+    public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+        TextView txtNombre, txtAutor;
+        ImageView imgLibro, imgDisponible;
+        Book selectedBook;
+
+
+        public CardViewHolder(@NonNull View itemView) {
+            super(itemView);
+            txtNombre = itemView.findViewById(R.id.txtNombre);
+            txtAutor = itemView.findViewById(R.id.txtAutor);
+            imgLibro = itemView.findViewById(R.id.imgLibro);
+            imgDisponible = itemView.findViewById(R.id.imgDisponible);
+            itemView.setOnCreateContextMenuListener(this);
+            itemView.setOnLongClickListener(view->{
+                selectedBook = books.get(getAdapterPosition());
+                return false;
+            });
+
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            if(v.getContext() instanceof Activity){
+                ((Activity) v.getContext()).getMenuInflater().inflate(R.menu.menucontextual, menu);
+                MenuItem itemCodigo = menu.findItem(R.id.itemCodigo);
+                itemCodigo.setVisible(false);
+                MenuItem itemFavorito = menu.findItem(R.id.itemFavorito);
+                itemFavorito.setVisible(true);
+
+                //No se si lo siguiente es una mala praxis, pero no se me ocurre ningún modo de pasar el id del libro seleccionado para que funcione el metodo desde el onContextItemSelected de Main
+                itemFavorito.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(@NonNull MenuItem item) {
+                        Toast.makeText(v.getContext(), "Id de libro es: " + selectedBook.getId(), Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+            }
+        }
+    }
 
     public AdapterBooks(List<Book> books){
         this.books = books;
