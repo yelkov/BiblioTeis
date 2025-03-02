@@ -1,5 +1,7 @@
 package com.example.biblioteis.adapter;
 
+import static android.view.View.VISIBLE;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,13 +17,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.biblioteis.API.models.Book;
+import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.ImageRepository;
+import com.example.biblioteis.DB.models.UserModel;
+import com.example.biblioteis.DB.repositoryDB.UserRepositoryAssetHelper;
 import com.example.biblioteis.R;
 import com.example.biblioteis.detallesActivity.DetallesActivity;
+import com.example.biblioteis.provider.UserProvider;
 
 import java.util.List;
 
@@ -31,11 +38,14 @@ public class AdapterBooks extends RecyclerView.Adapter{
     public static final String BOOK_ID = "bookId";
     List<Book> books;
     ImageRepository imageRepository;
+    UserRepositoryAssetHelper userRepositoryAssetHelper;
+    LiveData<UserModel> userModelFavBook;
 
     public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView txtNombre, txtAutor;
-        ImageView imgLibro, imgDisponible;
+        ImageView imgLibro, imgDisponible, imgHeart;
         Book selectedBook;
+
 
 
         public CardViewHolder(@NonNull View itemView) {
@@ -44,11 +54,17 @@ public class AdapterBooks extends RecyclerView.Adapter{
             txtAutor = itemView.findViewById(R.id.txtAutor);
             imgLibro = itemView.findViewById(R.id.imgLibro);
             imgDisponible = itemView.findViewById(R.id.imgDisponible);
+            imgHeart = itemView.findViewById(R.id.imgHeart);
             itemView.setOnCreateContextMenuListener(this);
             itemView.setOnLongClickListener(view->{
                 selectedBook = books.get(getAdapterPosition());
                 return false;
             });
+            User usuario = UserProvider.getInstance();
+            if (usuario.getName() != null){
+                userRepositoryAssetHelper = new UserRepositoryAssetHelper(itemView.getContext());
+                userModelFavBook = userRepositoryAssetHelper.getUser(usuario.getId());
+            }
 
         }
 
@@ -114,6 +130,14 @@ public class AdapterBooks extends RecyclerView.Adapter{
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.primary_dark));
         } else {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.secondary_light));
+        }
+
+        if(userModelFavBook != null){
+            Integer favBook = userModelFavBook.getValue().getBook_fav();
+            if(favBook != null && favBook == book.getId()){
+                viewHolder.imgHeart.setImageResource(R.drawable.heart);
+                viewHolder.imgHeart.setVisibility(VISIBLE);
+            }
         }
     }
 

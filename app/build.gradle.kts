@@ -46,4 +46,6 @@ dependencies {
     implementation("com.google.zxing:core:3.3.0")
     implementation(libs.security.crypto)
     implementation(libs.preference)
+    implementation(libs.sqliteassethelper)
+
 }
