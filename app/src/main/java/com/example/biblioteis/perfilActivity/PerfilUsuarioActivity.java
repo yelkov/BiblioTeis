@@ -1,4 +1,4 @@
-package com.example.biblioteis.ui.perfil;
+package com.example.biblioteis.perfilActivity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;

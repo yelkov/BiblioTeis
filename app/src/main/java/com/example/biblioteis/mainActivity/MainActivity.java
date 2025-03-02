@@ -1,4 +1,4 @@
-package com.example.biblioteis.ui.main;
+package com.example.biblioteis.mainActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,9 +39,9 @@ import com.example.biblioteis.adapter.AdapterBooks;
 import com.example.biblioteis.config.MenuConfig;
 import com.example.biblioteis.R;
 import com.example.biblioteis.provider.UserProvider;
-import com.example.biblioteis.ui.catalogo.CatalogoActivity;
-import com.example.biblioteis.ui.detalles.DetallesActivity;
-import com.example.biblioteis.ui.login.LoginActivity;
+import com.example.biblioteis.catalogoActivity.CatalogoActivity;
+import com.example.biblioteis.detallesActivity.DetallesActivity;
+import com.example.biblioteis.loginActivity.LoginActivity;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

@@ -15,9 +15,9 @@ import androidx.core.view.MenuProvider;
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.R;
 import com.example.biblioteis.provider.UserProvider;
-import com.example.biblioteis.ui.login.LoginActivity;
-import com.example.biblioteis.ui.perfil.PerfilUsuarioActivity;
-import com.example.biblioteis.ui.qrscanner.QRScannerActivity;
+import com.example.biblioteis.loginActivity.LoginActivity;
+import com.example.biblioteis.perfilActivity.PerfilUsuarioActivity;
+import com.example.biblioteis.qrscannerActivity.QRScannerActivity;
 
 public class MenuConfig implements MenuProvider {
     Context context;

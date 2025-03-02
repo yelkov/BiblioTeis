@@ -1,4 +1,4 @@
-package com.example.biblioteis.ui.qrscanner;
+package com.example.biblioteis.qrscannerActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.biblioteis.adapter.AdapterBooks;
 import com.example.biblioteis.R;
-import com.example.biblioteis.ui.detalles.DetallesActivity;
+import com.example.biblioteis.detallesActivity.DetallesActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 

@@ -1,4 +1,4 @@
-package com.example.biblioteis.ui.detalles;
+package com.example.biblioteis.detallesActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

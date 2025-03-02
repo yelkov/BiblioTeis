@@ -1,4 +1,4 @@
-package com.example.biblioteis.ui.catalogo;
+package com.example.biblioteis.catalogoActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
