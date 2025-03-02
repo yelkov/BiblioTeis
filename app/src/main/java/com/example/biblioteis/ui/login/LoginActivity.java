@@ -1,7 +1,6 @@
-package com.example.biblioteis;
+package com.example.biblioteis.ui.login;
 
 import android.content.SharedPreferences;
-import android.net.eap.EapSessionConfig;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -21,6 +20,9 @@ import androidx.security.crypto.MasterKey;
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.UserRepository;
+import com.example.biblioteis.config.MenuConfig;
+import com.example.biblioteis.R;
+import com.example.biblioteis.provider.UserProvider;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

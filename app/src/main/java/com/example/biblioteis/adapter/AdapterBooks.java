@@ -1,4 +1,4 @@
-package com.example.biblioteis;
+package com.example.biblioteis.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.biblioteis.API.models.Book;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.ImageRepository;
+import com.example.biblioteis.R;
+import com.example.biblioteis.ui.detalles.DetallesActivity;
 
 import java.util.List;
 

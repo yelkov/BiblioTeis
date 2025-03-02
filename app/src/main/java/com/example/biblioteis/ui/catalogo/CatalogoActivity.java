@@ -1,4 +1,4 @@
-package com.example.biblioteis;
+package com.example.biblioteis.ui.catalogo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,6 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.biblioteis.API.models.Book;
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
+import com.example.biblioteis.adapter.AdapterBooks;
+import com.example.biblioteis.config.MenuConfig;
+import com.example.biblioteis.R;
+import com.example.biblioteis.provider.UserProvider;
 
 import java.util.List;
 import java.util.stream.Collectors;

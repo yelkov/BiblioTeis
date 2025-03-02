@@ -1,20 +1,19 @@
-package com.example.biblioteis;
+package com.example.biblioteis.ui.qrscanner;
 
-import android.app.ComponentCaller;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.biblioteis.adapter.AdapterBooks;
+import com.example.biblioteis.R;
+import com.example.biblioteis.ui.detalles.DetallesActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -49,7 +48,7 @@ public class QRScannerActivity extends AppCompatActivity {
                 finish();
             }else{
                 Toast.makeText(this, "Leyendo: "+intentResult.getContents(), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this,DetallesActivity.class);
+                Intent intent = new Intent(this, DetallesActivity.class);
                 intent.putExtra(AdapterBooks.BOOK_ID,1); //vamos a hardcodear el id del libro, pero aquí deberiamos obtener este id del qr que se vaya a leer
                 startActivity(intent);
                 finish();

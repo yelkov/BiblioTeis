@@ -1,10 +1,11 @@
-package com.example.biblioteis;
+package com.example.biblioteis.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.biblioteis.API.models.Book;
 import com.example.biblioteis.API.models.BookLending;
 import com.example.biblioteis.API.repository.BookRepository;
+import com.example.biblioteis.R;
+import com.example.biblioteis.ui.detalles.DetallesActivity;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +26,18 @@ public class AdapterLendings extends RecyclerView.Adapter {
 
     List<BookLending> lendings;
     BookRepository bookRepository;
+
+    public class LendingCardViewHolder extends RecyclerView.ViewHolder {
+        TextView txtLendingBookName, txtLendingDate, txtReturningDateText, txtReturningDate;
+        public LendingCardViewHolder(@NonNull View itemView) {
+            super(itemView);
+            txtLendingBookName = itemView.findViewById(R.id.txtLendingBookName);
+            txtLendingDate = itemView.findViewById(R.id.txtLendingDate);
+            txtReturningDateText = itemView.findViewById(R.id.txtReturningDateText);
+            txtReturningDate = itemView.findViewById(R.id.txtReturningDate);
+
+        }
+    }
 
     public AdapterLendings(List<BookLending> lendings){
         this.lendings = lendings;

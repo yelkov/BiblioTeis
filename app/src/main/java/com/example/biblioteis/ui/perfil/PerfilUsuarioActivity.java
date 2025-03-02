@@ -1,9 +1,8 @@
-package com.example.biblioteis;
+package com.example.biblioteis.ui.perfil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +21,10 @@ import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.ImageRepository;
 import com.example.biblioteis.API.repository.UserRepository;
+import com.example.biblioteis.adapter.AdapterLendings;
+import com.example.biblioteis.config.MenuConfig;
+import com.example.biblioteis.R;
+import com.example.biblioteis.provider.UserProvider;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.biblioteis;
+package com.example.biblioteis.config;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuProvider;
 
 import com.example.biblioteis.API.models.User;
+import com.example.biblioteis.R;
+import com.example.biblioteis.provider.UserProvider;
+import com.example.biblioteis.ui.login.LoginActivity;
+import com.example.biblioteis.ui.perfil.PerfilUsuarioActivity;
+import com.example.biblioteis.ui.qrscanner.QRScannerActivity;
 
 public class MenuConfig implements MenuProvider {
     Context context;
@@ -35,7 +40,7 @@ public class MenuConfig implements MenuProvider {
     public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
         if(id == R.id.btnEscanear){
-            Intent intent = new Intent(context,QRScannerActivity.class);
+            Intent intent = new Intent(context, QRScannerActivity.class);
             context.startActivity(intent);
         }
         if(id == R.id.btnLoguear && !(context instanceof LoginActivity)){

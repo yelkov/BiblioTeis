@@ -1,4 +1,4 @@
-package com.example.biblioteis;
+package com.example.biblioteis.ui.detalles;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +25,10 @@ import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookLendingRepository;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.ImageRepository;
+import com.example.biblioteis.adapter.AdapterBooks;
+import com.example.biblioteis.config.MenuConfig;
+import com.example.biblioteis.R;
+import com.example.biblioteis.provider.UserProvider;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

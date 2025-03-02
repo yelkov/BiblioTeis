@@ -1,4 +1,4 @@
-package com.example.biblioteis;
+package com.example.biblioteis.ui.catalogo;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
