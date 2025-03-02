@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         registerForContextMenu(btnCatalogo); //vamos a poner un menu contextual en el botón de catálogo para permitir introducir manualmente un código de libro
 
+        //usamos un LiveData para que carguen las vistas al recuperar los datos del sharedpreferences y hacer el login
         userLiveData.observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {

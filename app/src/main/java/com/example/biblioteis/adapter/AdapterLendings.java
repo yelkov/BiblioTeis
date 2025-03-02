@@ -64,7 +64,6 @@ public class AdapterLendings extends RecyclerView.Adapter {
             LocalDateTime returnDate = LocalDateTime.parse(lending.getReturnDate());
             viewHolder.txtReturningDate.setText(formatearFecha(returnDate));
         }else{
-            viewHolder.txtReturningDateText.setText("Devolver antes de: ");
             LocalDateTime limitDate = lendDate.plusWeeks(2);
             if(limitDate.isBefore(LocalDateTime.now())){
                 viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.red));
@@ -73,6 +72,7 @@ public class AdapterLendings extends RecyclerView.Adapter {
                 viewHolder.txtReturningDateText.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.black));
                 viewHolder.txtReturningDate.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.black));
             }
+            viewHolder.txtReturningDateText.setText("Devolver antes de: ");
             viewHolder.txtReturningDate.setText(formatearFecha(limitDate));
         }
 

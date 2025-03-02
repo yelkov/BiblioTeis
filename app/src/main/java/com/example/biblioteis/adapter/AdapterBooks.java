@@ -61,7 +61,7 @@ public class AdapterBooks extends RecyclerView.Adapter{
                 MenuItem itemFavorito = menu.findItem(R.id.itemFavorito);
                 itemFavorito.setVisible(true);
 
-                //No se si lo siguiente es una mala praxis, pero no se me ocurre ningún modo de pasar el id del libro seleccionado para que funcione el metodo desde el onContextItemSelected de Main
+                //No sé si lo siguiente es una mala praxis, pero no se me ocurre ningún modo de pasar el id del libro seleccionado para que funcione el metodo desde el onContextItemSelected de Main
                 itemFavorito.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
@@ -91,28 +91,16 @@ public class AdapterBooks extends RecyclerView.Adapter{
         Book book = books.get(position);
         viewHolder.txtNombre.setText(book.getTitle());
         viewHolder.txtAutor.setText(book.getAuthor());
+
         String imageName = book.getBookPicture();
-        imageRepository.getImage(imageName, new BookRepository.ApiCallback<ResponseBody>() {
-            @Override
-            public void onSuccess(ResponseBody result) {
-                if(result != null){
-                    Bitmap bitmap = BitmapFactory.decodeStream(result.byteStream());
-                    viewHolder.imgLibro.setImageBitmap(bitmap);
-                }else{
-                    viewHolder.imgLibro.setImageResource(R.drawable.cover);
-                }
+        askForBookImage(imageName, viewHolder);
 
-            }
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
         if(book.isAvailable()){
             viewHolder.imgDisponible.setImageResource(R.drawable.ok);
         }else{
             viewHolder.imgDisponible.setImageResource(R.drawable.x);
         }
+
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,6 +115,25 @@ public class AdapterBooks extends RecyclerView.Adapter{
         } else {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.secondary_light));
         }
+    }
+
+    private void askForBookImage(String imageName, CardViewHolder viewHolder) {
+        imageRepository.getImage(imageName, new BookRepository.ApiCallback<ResponseBody>() {
+            @Override
+            public void onSuccess(ResponseBody result) {
+                if(result != null){
+                    Bitmap bitmap = BitmapFactory.decodeStream(result.byteStream());
+                    viewHolder.imgLibro.setImageBitmap(bitmap);
+                }else{
+                    viewHolder.imgLibro.setImageResource(R.drawable.cover);
+                }
+
+            }
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(viewHolder.itemView.getContext(), "Error al solicitar imagen de libro", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
