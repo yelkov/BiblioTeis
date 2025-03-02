@@ -88,6 +88,10 @@ public class AdapterBooks extends RecyclerView.Adapter{
                 itemFavorito.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
+                        if(UserProvider.getInstance().getName() == null){
+                            Toast.makeText(itemView.getContext(), "Es necesario estar logueado para agregar a favoritos", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
                         if(isFavorito){
                             eliminarFavorito(selectedBook.getId());
                             userFavBooks.removeBook(selectedBook.getId());
