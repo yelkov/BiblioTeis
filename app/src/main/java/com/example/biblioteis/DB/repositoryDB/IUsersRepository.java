@@ -1,7 +1,11 @@
 package com.example.biblioteis.DB.repositoryDB;
 
-import androidx.lifecycle.LiveData;
+import com.example.biblioteis.DB.models.UserFavBookModel;
 
 public interface IUsersRepository<T> {
-    LiveData<T> getUser(int i);
+    UserFavBookModel getUserFavBooks(int userId);
+
+    void insertFavBook(int userId, int bookId);
+
+    void deleteFavBook(int userId, int bookId);
 }

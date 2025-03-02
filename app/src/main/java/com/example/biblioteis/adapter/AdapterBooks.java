@@ -17,14 +17,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.biblioteis.API.models.Book;
 import com.example.biblioteis.API.models.User;
 import com.example.biblioteis.API.repository.BookRepository;
 import com.example.biblioteis.API.repository.ImageRepository;
-import com.example.biblioteis.DB.models.UserModel;
+import com.example.biblioteis.DB.models.UserFavBookModel;
 import com.example.biblioteis.DB.repositoryDB.UserRepositoryAssetHelper;
 import com.example.biblioteis.R;
 import com.example.biblioteis.detallesActivity.DetallesActivity;
@@ -39,7 +38,7 @@ public class AdapterBooks extends RecyclerView.Adapter{
     List<Book> books;
     ImageRepository imageRepository;
     UserRepositoryAssetHelper userRepositoryAssetHelper;
-    LiveData<UserModel> userModelFavBook;
+    UserFavBookModel userFavBooks;
 
     public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView txtNombre, txtAutor;
@@ -63,7 +62,7 @@ public class AdapterBooks extends RecyclerView.Adapter{
             User usuario = UserProvider.getInstance();
             if (usuario.getName() != null){
                 userRepositoryAssetHelper = new UserRepositoryAssetHelper(itemView.getContext());
-                userModelFavBook = userRepositoryAssetHelper.getUser(usuario.getId());
+                userFavBooks = userRepositoryAssetHelper.getUserFavBooks(usuario.getId());
             }
 
         }
@@ -72,21 +71,49 @@ public class AdapterBooks extends RecyclerView.Adapter{
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             if(v.getContext() instanceof Activity){
                 ((Activity) v.getContext()).getMenuInflater().inflate(R.menu.menucontextual, menu);
+
                 MenuItem itemCodigo = menu.findItem(R.id.itemCodigo);
                 itemCodigo.setVisible(false);
+
                 MenuItem itemFavorito = menu.findItem(R.id.itemFavorito);
                 itemFavorito.setVisible(true);
 
-                //No sé si lo siguiente es una mala praxis, pero no se me ocurre ningún modo de pasar el id del libro seleccionado para que funcione el metodo desde el onContextItemSelected de Main
+                boolean isFavorito = userFavBooks != null && userFavBooks.getBook_ids() != null && userFavBooks.getBook_ids().contains(selectedBook.getId());
+                if(isFavorito){
+                    itemFavorito.setTitle("Eliminar favorito");
+                }else{
+                    itemFavorito.setTitle("Marcar favorito");
+                }
+
                 itemFavorito.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(@NonNull MenuItem item) {
-                        Toast.makeText(v.getContext(), "Id de libro es: " + selectedBook.getId(), Toast.LENGTH_SHORT).show();
+                        if(isFavorito){
+                            eliminarFavorito(selectedBook.getId());
+                            userFavBooks.removeBook(selectedBook.getId());
+                        }else{
+                            agregarFavorito(selectedBook.getId());
+                            userFavBooks.addBook(selectedBook.getId());
+                        }
+
                         return false;
                     }
                 });
             }
         }
+
+        private void agregarFavorito(int bookId){
+            userRepositoryAssetHelper.insertFavBook(UserProvider.getInstance().getId(), bookId);
+            int position = getAdapterPosition();
+            notifyItemChanged(position);
+        }
+
+        private void eliminarFavorito(int bookId){
+            userRepositoryAssetHelper.deleteFavBook(UserProvider.getInstance().getId(), bookId);
+            int position = getAdapterPosition();
+            notifyItemChanged(position);
+        }
+
     }
 
     public AdapterBooks(List<Book> books){
@@ -132,11 +159,13 @@ public class AdapterBooks extends RecyclerView.Adapter{
             holder.itemView.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.secondary_light));
         }
 
-        if(userModelFavBook != null){
-            Integer favBook = userModelFavBook.getValue().getBook_fav();
-            if(favBook != null && favBook == book.getId()){
-                viewHolder.imgHeart.setImageResource(R.drawable.heart);
-                viewHolder.imgHeart.setVisibility(VISIBLE);
+        if(userFavBooks != null){
+            List<Integer> favoriteBooks = userFavBooks.getBook_ids();
+            for (Integer favBookId : favoriteBooks){
+                if(favBookId == book.getId()){
+                    viewHolder.imgHeart.setImageResource(R.drawable.heart);
+                    viewHolder.imgHeart.setVisibility(VISIBLE);
+                }
             }
         }
     }
