@@ -20,14 +20,14 @@ public class UserRepositoryAssetHelper implements IUsersRepository<UserFavBookMo
         bdb = new BiblioTeisBDAssetHelper(context);
     }
     @Override
-    public UserFavBookModel getUserFavBooks(int i) {
+    public UserFavBookModel getUserFavBooks(int userId) {
         UserFavBookModel u = new UserFavBookModel();
         Cursor c = null;
         SQLiteDatabase rdb = null;
         try{
             rdb = bdb.getReadableDatabase();
 
-            c = rdb.rawQuery(BiblioTeisBDAssetHelper.GETUSERBOOKS, new String[]{String.valueOf(i)});
+            c = rdb.rawQuery(BiblioTeisBDAssetHelper.GETUSERBOOKS, new String[]{String.valueOf(userId)});
             if(c.moveToFirst()){
                 u.setUser_id(c.getInt(c.getColumnIndexOrThrow("user")));
                 do{
@@ -49,19 +49,106 @@ public class UserRepositoryAssetHelper implements IUsersRepository<UserFavBookMo
     }
 
     @Override
-    public void insertFavBook(int userId, int bookId) {
+    public boolean userExists(int userId) {
+        SQLiteDatabase rdb = null;
+        Cursor c = null;
+        boolean exists = false;
+        try{
+            rdb = bdb.getReadableDatabase();
+            c = rdb.rawQuery(BiblioTeisBDAssetHelper.USER_EXISTS,new String[]{String.valueOf(userId)});
+            exists = c.moveToFirst();
+        }catch (Exception e){
+            Log.e("DB_ERROR", "Error al leer usuario existe: " + e.getMessage(), e);
+        }finally {
+            if(c != null){
+                c.close();
+            }
+            rdb.close();
+        }
+        return exists;
+    }
+
+    @Override
+    public boolean bookExists(int bookId) {
+        SQLiteDatabase rdb = null;
+        Cursor c = null;
+        boolean exists = false;
+        try{
+            rdb = bdb.getReadableDatabase();
+            c = rdb.rawQuery(BiblioTeisBDAssetHelper.BOOK_EXISTS,new String[]{String.valueOf(bookId)});
+            exists = c.moveToFirst();
+        }catch (Exception e){
+            Log.e("DB_ERROR", "Error al leer book existe: " + e.getMessage(), e);
+        }finally {
+            if(c != null){
+                c.close();
+            }
+            rdb.close();
+        }
+        return exists;
+    }
+
+    @Override
+    public void insertUser(int userId) {
+        if(userExists(userId)){
+            Log.i("DB_INFO", "El usuario ya existe, no se inserta.");
+            return;
+        }
+
+        SQLiteDatabase wdb = null;
+        SQLiteStatement stmt = null;
+        try{
+            wdb = bdb.getWritableDatabase();
+            stmt = wdb.compileStatement(BiblioTeisBDAssetHelper.INSERT_NEW_USER);
+            stmt.bindLong(1,userId);
+            stmt.executeInsert();
+        } catch (Exception e) {
+            Log.e("DB_ERROR", "Error al agregar usuario: " + e.getMessage(), e);
+        }finally {
+            if(stmt!=null)stmt.close();
+            wdb.close();
+        }
+
+    }
+
+    @Override
+    public void insertBook(int bookId) {
+        if(bookExists(bookId)){
+            Log.i("DB_INFO", "El libro ya existe, no se inserta.");
+            return;
+        }
+
         SQLiteDatabase wdb = null;
         SQLiteStatement stmt = null;
         try{
             wdb = bdb.getWritableDatabase();
             stmt = wdb.compileStatement(BiblioTeisBDAssetHelper.INSERT_NEW_BOOK);
+            stmt.bindLong(1,bookId);
+            stmt.executeInsert();
+        } catch (Exception e) {
+            Log.e("DB_ERROR", "Error al agregar libro: " + e.getMessage(), e);
+        }finally {
+            if(stmt!=null)stmt.close();
+            wdb.close();
+        }
+    }
+
+    @Override
+    public void insertUserFavBook(int userId, int bookId) {
+        insertUser(userId);
+        insertBook(bookId);
+
+        SQLiteDatabase wdb = null;
+        SQLiteStatement stmt = null;
+        try{
+            wdb = bdb.getWritableDatabase();
+            stmt = wdb.compileStatement(BiblioTeisBDAssetHelper.INSERT_NEW_FAV_BOOK);
             stmt.bindLong(1, userId);
             stmt.bindLong(2, bookId);
             stmt.executeInsert();
 
         } catch (Exception e) {
             Log.e("DB_ERROR", "Error al agregar favorito: " + e.getMessage(), e);
-            Toast.makeText(context, "Error al agregar favorito", Toast.LENGTH_SHORT).show();
         }finally {
             if (stmt != null) {
                 stmt.close();

@@ -107,7 +107,7 @@ public class AdapterBooks extends RecyclerView.Adapter{
         }
 
         private void agregarFavorito(int bookId){
-            userRepositoryAssetHelper.insertFavBook(UserProvider.getInstance().getId(), bookId);
+            userRepositoryAssetHelper.insertUserFavBook(UserProvider.getInstance().getId(), bookId);
             int position = getAdapterPosition();
             notifyItemChanged(position);
         }
