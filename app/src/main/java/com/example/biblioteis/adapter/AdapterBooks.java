@@ -36,6 +36,8 @@ import okhttp3.ResponseBody;
 
 public class AdapterBooks extends RecyclerView.Adapter{
     public static final String BOOK_ID = "bookId";
+    public static final String BOOK_DISPONIBLES = "bookDisponibles";
+    public static final String BOOK_TOTAL_COPIAS = "bookTotalCopias";
     List<Book> books;
     ImageRepository imageRepository;
     UserRepositoryAssetHelper userRepositoryAssetHelper;
@@ -145,8 +147,8 @@ public class AdapterBooks extends RecyclerView.Adapter{
 
         Integer[] stats = allBooksStats.get(book.getIsbn());
         Integer disponibles = stats[0];
-        Integer total = stats[1];
-        viewHolder.txtBookStats.setText(disponibles+"/"+total);
+        Integer totalCopias = stats[1];
+        viewHolder.txtBookStats.setText(disponibles+"/"+totalCopias);
 
         String imageName = book.getBookPicture();
         askForBookImage(imageName, viewHolder);
@@ -162,6 +164,8 @@ public class AdapterBooks extends RecyclerView.Adapter{
             public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), DetallesActivity.class);
                     intent.putExtra(BOOK_ID,book.getId());
+                    intent.putExtra(BOOK_DISPONIBLES,disponibles);
+                    intent.putExtra(BOOK_TOTAL_COPIAS,totalCopias);
                     v.getContext().startActivity(intent);
             }
         });

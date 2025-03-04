@@ -34,18 +34,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import okhttp3.ResponseBody;
 
 public class DetallesActivity extends AppCompatActivity {
 
-    TextView txtTitulo, txtAutor, txtIsbn, txtFechaDevolucion, txtFechaPublicacion, txtDetallesUsuario, txtDetallesNombre;
+    TextView txtTitulo, txtAutor, txtIsbn, txtFechaDevolucion, txtFechaPublicacion, txtDetallesUsuario, txtDetallesNombre, txtDetallesBookStats;
     ImageView imgLibroDetalle;
     Button btnReservar, btnVolver;
     BookLending lastLending;
     LinearLayout linearDevolucion;
-    Integer bookId;
+    Integer bookId, bookDisponibles, bookTotalCopias;
     BookRepository br;
     BookLendingRepository blr;
     Toolbar tbDetalles;
@@ -69,6 +70,8 @@ public class DetallesActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         bookId = intent.getIntExtra(AdapterBooks.BOOK_ID,0);
+        bookDisponibles = intent.getIntExtra(AdapterBooks.BOOK_DISPONIBLES,0);
+        bookTotalCopias = intent.getIntExtra(AdapterBooks.BOOK_TOTAL_COPIAS,0);
         br = new BookRepository();
         blr = new BookLendingRepository();
 
@@ -136,6 +139,7 @@ public class DetallesActivity extends AppCompatActivity {
         txtFechaPublicacion = findViewById(R.id.txtFechaPublicacion);
         txtDetallesUsuario = findViewById(R.id.txtDetallesUsuario);
         txtDetallesNombre = findViewById(R.id.txtDetallesNombre);
+        txtDetallesBookStats = findViewById(R.id.txtDetallesBookStats);
         imgLibroDetalle = findViewById(R.id.imgLibroDetalle);
         btnReservar = findViewById(R.id.btnReservar);
         btnVolver = findViewById(R.id.btnVolverDetalle);
@@ -149,6 +153,8 @@ public class DetallesActivity extends AppCompatActivity {
             public void onSuccess(Boolean result) {
                 Toast.makeText(DetallesActivity.this, "Libro devuelto", Toast.LENGTH_SHORT).show();
                 btnReservar.setText("Reservar");
+                bookDisponibles++;
+                txtDetallesBookStats.setText(bookDisponibles+" disponible(s) / "+bookTotalCopias + " copia(s)");
                 linearDevolucion.setVisibility(View.GONE);
             }
 
@@ -166,6 +172,8 @@ public class DetallesActivity extends AppCompatActivity {
                 Toast.makeText(DetallesActivity.this, "Se ha reservado el libro", Toast.LENGTH_SHORT).show();
                 btnReservar.setText("Devolver");
                 linearDevolucion.setVisibility(View.VISIBLE);
+                bookDisponibles--;
+                txtDetallesBookStats.setText(bookDisponibles+" disponible(s) / "+bookTotalCopias + " copia(s)");
                 LocalDateTime fechaDevolucion = LocalDateTime.now().plusWeeks(2);
                 setFechaDevolucion(fechaDevolucion);
             }
@@ -186,6 +194,8 @@ public class DetallesActivity extends AppCompatActivity {
             txtFechaPublicacion.setText(formatearFecha(publishedDate));
 
             txtIsbn.setText(book.getIsbn());
+
+            txtDetallesBookStats.setText(bookDisponibles+" disponible(s) / "+bookTotalCopias + " copia(s)");
 
             setBookImage(book);
             setLendingViews(book);
