@@ -10,13 +10,10 @@ import java.util.List;
 public class MainActivityVM extends ViewModel {
 
     MutableLiveData<Book> book;
-    MutableLiveData<List<Book>> ultimosPublicados;
-    MutableLiveData<List<Book>> recomendaciones;
-
+    MutableLiveData<List<Book>> books;
     public MainActivityVM(){
         book = new MutableLiveData<>();
-        ultimosPublicados = new MutableLiveData<>();
-        recomendaciones = new MutableLiveData<>();
+        books = new MutableLiveData<>();
     }
 
 }

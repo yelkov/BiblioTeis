@@ -47,7 +47,9 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,15 +83,30 @@ public class MainActivity extends AppCompatActivity {
         addMenuProvider(menuConfig);
 
         vm = new ViewModelProvider(this).get(MainActivityVM.class);
-        vm.ultimosPublicados.observe(this, books -> {
-            rvUltimosPublicados.setAdapter(new AdapterBooks(books));
-        });
-        vm.recomendaciones.observe(this,books ->{
-            rvRecomendaciones.setAdapter(new AdapterBooks(books));
+        vm.books.observe(this, books -> {
+            //Con los libros que nos devuelve la API, vamos a separar los últimos publicados, dos aleatorios para recomendar y calcular el total de copias de cada ejemplar y añadirlos a los recycler
+            //Si el catálogo fuese muy grande quizá el algoritmo no sea el más eficiente, ya que recorremos la lista varias veces para cada acción. Sería un punto a pensar a futuro
+
+            List<Book> ultimosPublicados = books.stream()
+                    .sorted(Comparator.comparing(Book::getPublishedDate).reversed())
+                    .limit(5)
+                    .collect(Collectors.toList());
+
+            Collections.shuffle(books);
+            List<Book> recomendaciones = books.stream()
+                    .filter(Book::isAvailable)
+                    .limit(2)
+                    .collect(Collectors.toList());
+
+            Map<String, Integer[]> allBooksStats = obtainBooksStats(books);
+
+            rvUltimosPublicados.setAdapter(new AdapterBooks(ultimosPublicados, allBooksStats));
+            rvRecomendaciones.setAdapter(new AdapterBooks(recomendaciones, allBooksStats));
         });
 
+
         br = new BookRepository();
-        cargarLibros();
+        cargarLibros(); //hacemos la petición a la API y seteamos los libros en el viewmodel
 
         btnCatalogo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         registerForContextMenu(btnCatalogo); //vamos a poner un menu contextual en el botón de catálogo para permitir introducir manualmente un código de libro
 
         //usamos un LiveData para que carguen las vistas al recuperar los datos del sharedpreferences y hacer el login
+        //así evitamos que se quede sin mostrar el nombre del usuario en la interfaz cuando se produzca el login
         userLiveData.observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {
@@ -111,15 +129,11 @@ public class MainActivity extends AppCompatActivity {
 
     }//fin onCreate
 
-
-
     private void initializeViews() {
         tbMain = findViewById(R.id.tbMain);
 
         txtNombreUsuario = findViewById(R.id.txtNombreUsuario);
-        txtNombreUsuario.setText(" ");
         txtUsuario = findViewById(R.id.txtUsuario);
-        txtUsuario.setText(" ");
 
         btnCatalogo = findViewById(R.id.btnCatalogo);
 
@@ -129,24 +143,99 @@ public class MainActivity extends AppCompatActivity {
         rvRecomendaciones.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    private void setSessionUsuario() {
+        //vamos a utilizar los shared preferences para mantener iniciada la sesión de usuario y setear User en el singleton UserProvider.
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean isLogged = sp.getBoolean(LoginActivity.IS_LOGGED,false);
+
+        if(isLogged){
+            String email = sp.getString(LoginActivity.USER_EMAIL,null);
+            String password;
+            MasterKey mk = null;
+            try{
+                mk = new MasterKey.Builder(this).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build();
+                SharedPreferences spEcrypted = EncryptedSharedPreferences.create(this,LoginActivity.ENCRYPTEDSHARE,mk,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+
+                password = spEcrypted.getString(LoginActivity.PASSWORD,null);
+
+            } catch (GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            loguearUsuario(email,password); //hacemos una petición a la API para obtener al User
+            checkUsuarioLogueado(); //seteamos las vistas
+        }
+    }
+
+    private void loguearUsuario(String email, String password) {
+        UserRepository ur = new UserRepository();
+        ur.login(email, password, new BookRepository.ApiCallback<User>() {
+            @Override
+            public void onSuccess(User result) {
+                if(result != null){
+                    Toast.makeText(MainActivity.this, "Login existoso, bienvenido", Toast.LENGTH_LONG).show();
+                    User usuario = UserProvider.getInstance();
+                    usuario.setEmail(result.getEmail());
+                    usuario.setName(result.getName());
+                    usuario.setId(result.getId());
+                    usuario.setBookLendings(result.getBookLendings());
+                    usuario.setDateJoined(result.getDateJoined());
+                    usuario.setPasswordHash(result.getPasswordHash());
+                    usuario.setProfilePicture(result.getProfilePicture());
+                    userLiveData.setValue(usuario);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(MainActivity.this, "Se ha producido un error en la solicitud de login", Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    private void checkUsuarioLogueado() {
+        User usuario = UserProvider.getInstance();
+        if(usuario.getName() != null){
+            txtUsuario.setText("Usuario: ");
+            txtNombreUsuario.setText(usuario.getName());
+
+        }else{
+            txtUsuario.setText(" ");
+            txtNombreUsuario.setText(" ");
+
+        }
+    }
+    private Map<String, Integer[]> obtainBooksStats(List<Book> books) {
+        Map<String, Integer[]> allBookStats = new HashMap<>(); //creamos un map para guardar el número total de copias de un libro según su isbn y el número de disponibles
+        for(Book book : books){
+            if(!allBookStats.containsKey(book.getIsbn())){
+                int total = 1;
+                int disponibles = book.isAvailable()? 1 : 0;
+                allBookStats.put(book.getIsbn(),new Integer[]{disponibles,total});
+            }else{
+                Integer[] stats = allBookStats.get(book.getIsbn());
+                stats[1]++; //añadimos uno más al total de libros
+                if(book.isAvailable()){
+                    stats[0]++; //añadimos uno al número de disponibles
+                }
+            }
+        }
+        return allBookStats;
+    }
+
     private void cargarLibros() {
         br.getBooks(new BookRepository.ApiCallback<List<Book>>(){
 
             @Override
             public void onSuccess(List<Book> result) {
-                List<Book> ultimosPublicados = result.stream()
-                        .sorted(Comparator.comparing(Book::getPublishedDate).reversed())
-                        .limit(5)
-                        .collect(Collectors.toList());
-                vm.ultimosPublicados.setValue(ultimosPublicados);
-
-                Collections.shuffle(result);
-                List<Book> recomendaciones = result.stream()
-                        .filter(Book::isAvailable)
-                        .limit(2)
-                        .collect(Collectors.toList());
-                vm.recomendaciones.setValue(recomendaciones);
-
+                vm.books.setValue(result);
             }
 
             @Override
@@ -161,21 +250,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         checkUsuarioLogueado();
-        cargarLibros();
         menuConfig.updateToolbarProfileTint();
-    }
 
-    private void checkUsuarioLogueado() {
-        User usuario = UserProvider.getInstance();
-        if(usuario.getName() != null){
-            txtUsuario.setText("Usuario: ");
-            txtNombreUsuario.setText(usuario.getName());
-
-        }else{
-            txtUsuario.setText(" ");
-            txtNombreUsuario.setText(" ");
-
-        }
+        //volvemos a hacer una petición a la API por si se han producido cambios.
+        //De nuevo, quizá no sea lo más eficiente y se pueda mejorar solo actualizando los elementos que cambian
+        cargarLibros();
     }
 
     @Override
@@ -223,59 +302,5 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void setSessionUsuario() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean isLogged = sp.getBoolean(LoginActivity.IS_LOGGED,false);
-
-        if(isLogged){
-            String email = sp.getString(LoginActivity.USER_EMAIL,null);
-            String password;
-            MasterKey mk = null;
-            try{
-                mk = new MasterKey.Builder(this).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build();
-                SharedPreferences spEcrypted = EncryptedSharedPreferences.create(this,LoginActivity.ENCRYPTEDSHARE,mk,
-                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
-
-                password = spEcrypted.getString(LoginActivity.PASSWORD,null);
-
-            } catch (GeneralSecurityException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            loguearUsuario(email,password);
-            checkUsuarioLogueado();
-        }
-    }
-
-    private void loguearUsuario(String email, String password) {
-        UserRepository ur = new UserRepository();
-        ur.login(email, password, new BookRepository.ApiCallback<User>() {
-            @Override
-            public void onSuccess(User result) {
-                if(result != null){
-                    Toast.makeText(MainActivity.this, "Login existoso, bienvenido", Toast.LENGTH_LONG).show();
-                    User usuario = UserProvider.getInstance();
-                    usuario.setEmail(result.getEmail());
-                    usuario.setName(result.getName());
-                    usuario.setId(result.getId());
-                    usuario.setBookLendings(result.getBookLendings());
-                    usuario.setDateJoined(result.getDateJoined());
-                    usuario.setPasswordHash(result.getPasswordHash());
-                    usuario.setProfilePicture(result.getProfilePicture());
-                    userLiveData.setValue(usuario);
-
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Toast.makeText(MainActivity.this, "Se ha producido un error en la solicitud de login", Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
 }
 

@@ -30,6 +30,7 @@ import com.example.biblioteis.detallesActivity.DetallesActivity;
 import com.example.biblioteis.provider.UserProvider;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.ResponseBody;
 
@@ -39,9 +40,10 @@ public class AdapterBooks extends RecyclerView.Adapter{
     ImageRepository imageRepository;
     UserRepositoryAssetHelper userRepositoryAssetHelper;
     UserFavBookModel userFavBooks;
+    Map<String, Integer[]> allBooksStats;
 
     public class CardViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-        TextView txtNombre, txtAutor;
+        TextView txtNombre, txtAutor, txtBookStats;
         ImageView imgLibro, imgDisponible, imgHeart;
         Book selectedBook;
 
@@ -52,6 +54,7 @@ public class AdapterBooks extends RecyclerView.Adapter{
             txtNombre = itemView.findViewById(R.id.txtNombre);
             txtAutor = itemView.findViewById(R.id.txtAutor);
             imgLibro = itemView.findViewById(R.id.imgLibro);
+            txtBookStats = itemView.findViewById(R.id.txtBookStats);
             imgDisponible = itemView.findViewById(R.id.imgDisponible);
             imgHeart = itemView.findViewById(R.id.imgHeart);
             itemView.setOnCreateContextMenuListener(this);
@@ -120,8 +123,9 @@ public class AdapterBooks extends RecyclerView.Adapter{
 
     }
 
-    public AdapterBooks(List<Book> books){
+    public AdapterBooks(List<Book> books, Map<String, Integer[]> allBooksStats){
         this.books = books;
+        this.allBooksStats = allBooksStats;
     }
 
     @NonNull
@@ -138,6 +142,11 @@ public class AdapterBooks extends RecyclerView.Adapter{
         Book book = books.get(position);
         viewHolder.txtNombre.setText(book.getTitle());
         viewHolder.txtAutor.setText(book.getAuthor());
+
+        Integer[] stats = allBooksStats.get(book.getIsbn());
+        Integer disponibles = stats[0];
+        Integer total = stats[1];
+        viewHolder.txtBookStats.setText(disponibles+"/"+total);
 
         String imageName = book.getBookPicture();
         askForBookImage(imageName, viewHolder);

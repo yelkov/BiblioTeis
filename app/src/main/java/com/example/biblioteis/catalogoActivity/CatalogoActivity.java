@@ -26,7 +26,9 @@ import com.example.biblioteis.config.MenuConfig;
 import com.example.biblioteis.R;
 import com.example.biblioteis.provider.UserProvider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CatalogoActivity extends AppCompatActivity {
@@ -60,7 +62,8 @@ public class CatalogoActivity extends AppCompatActivity {
 
         vm = new ViewModelProvider(this).get(CatalogoVM.class);
         vm.books.observe(this, books -> {
-            rvCatalogo.setAdapter(new AdapterBooks(books));
+            vm.allBooksStats = obtainBooksStats(books);
+            rvCatalogo.setAdapter(new AdapterBooks(books, vm.allBooksStats));
         });
 
         br = new BookRepository();
@@ -100,6 +103,24 @@ public class CatalogoActivity extends AppCompatActivity {
         rvCatalogo.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    private Map<String, Integer[]> obtainBooksStats(List<Book> books) {
+        Map<String, Integer[]> allBookStats = new HashMap<>(); //creamos un map para guardar el número total de copias de un libro según su isbn y el número de disponibles
+        for(Book book : books){
+            if(!allBookStats.containsKey(book.getIsbn())){
+                int total = 1;
+                int disponibles = book.isAvailable()? 1 : 0;
+                allBookStats.put(book.getIsbn(),new Integer[]{disponibles,total});
+            }else{
+                Integer[] stats = allBookStats.get(book.getIsbn());
+                stats[1]++; //añadimos uno más al total de libros
+                if(book.isAvailable()){
+                    stats[0]++; //añadimos uno al número de disponibles
+                }
+            }
+        }
+        return allBookStats;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -125,7 +146,7 @@ public class CatalogoActivity extends AppCompatActivity {
                 .stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(busqueda) || book.getAuthor().toLowerCase().contains(busqueda))
                 .collect(Collectors.toList());
-        rvCatalogo.setAdapter(new AdapterBooks(filtrados));
+        rvCatalogo.setAdapter(new AdapterBooks(filtrados, vm.allBooksStats));
     }
 
     private void cargarLibros() {
