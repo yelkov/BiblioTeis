@@ -26,8 +26,12 @@ import com.example.biblioteis.config.MenuConfig;
 import com.example.biblioteis.R;
 import com.example.biblioteis.provider.UserProvider;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import okhttp3.ResponseBody;
 
@@ -128,6 +132,10 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                     }
                 }
                 vm.historicoLendings.setValue(historicoLendings);
+
+                //ordenamos los prestamos activos segun lo cerca que estén de la fecha de devolución
+                activeLendings = sortActiveLendings(activeLendings);
+
                 vm.activeLendings.setValue(activeLendings);
             }
 
@@ -137,6 +145,16 @@ public class PerfilUsuarioActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private List<BookLending> sortActiveLendings(List<BookLending> activeLendings) {
+        return activeLendings.stream()
+                .sorted(Comparator.comparing(lending -> {
+                    LocalDateTime date = LocalDateTime.parse(lending.getLendDate());
+                    LocalDateTime now = LocalDateTime.now();
+                    return Math.abs(Duration.between(now,date).toMillis());
+                }))
+                .collect(Collectors.toList());
     }
 
     @Override
