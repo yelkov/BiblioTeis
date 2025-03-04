@@ -6,7 +6,7 @@
         android:icon="@drawable/camara"
         app:iconTint="@color/secondary_dark"
         android:title="scan"
-        app:showAsAction="always|withText" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/btnPerfil"
         android:icon="@drawable/profile"
